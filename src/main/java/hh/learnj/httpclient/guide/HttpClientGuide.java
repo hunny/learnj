@@ -38,6 +38,8 @@ import org.apache.http.util.EntityUtils;
 
 
 public class HttpClientGuide {
+	
+	//Maven查询地址：http://search.maven.org/
 
 	public static void main(String[] args) {
 
