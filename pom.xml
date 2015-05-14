@@ -12,27 +12,35 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<spring.version>4.1.6.RELEASE</spring.version>
+		<springframework.version>4.1.6.RELEASE</springframework.version>
+		<hibernate.version>4.3.6.Final</hibernate.version>
+        <mysql.version>5.1.31</mysql.version>
+        <httpclient.version>4.4.1</httpclient.version>
 	</properties>
 	<dependencies>
 		<!-- spring核心包 -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
-			<version>${spring.version}</version>
+			<version>${springframework.version}</version>
 		</dependency>
 		<!-- spring web核心包 -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-web</artifactId>
-			<version>${spring.version}</version>
+			<version>${springframework.version}</version>
 		</dependency>
 		<!-- spring 数据库事务包 -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-tx</artifactId>
-			<version>${spring.version}</version>
+			<version>${springframework.version}</version>
 		</dependency>
+		<dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+            <version>${springframework.version}</version>
+        </dependency>
 		<!-- mybatis的核心包 -->
 		<dependency>
 			<groupId>org.mybatis</groupId>
@@ -62,16 +70,23 @@
 			<artifactId>druid</artifactId>
 			<version>1.0.14</version>
 		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-core</artifactId>
-			<version>5.0.0.Beta2</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-hibernate3</artifactId>
-			<version>2.0.8</version>
-		</dependency>
+		<!-- Hibernate -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>${hibernate.version}</version>
+        </dependency>
+        <!-- jsr303 validation -->
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+            <version>1.1.0.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>5.1.2.Final</version>
+        </dependency>
 		<!-- 自动注入时的依赖包 -->
 		<dependency>
 			<groupId>org.aspectj</groupId>
@@ -88,12 +103,12 @@
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
-			<version>4.4.1</version>
+			<version>${httpclient.version}</version>
 		</dependency>
 		<dependency>
 		    <groupId>org.apache.httpcomponents</groupId>
 		    <artifactId>httpmime</artifactId>
-		    <version>4.4.1</version>
+		    <version>${httpclient.version}</version>
 		</dependency>
 		<!-- Java WebService服务端实现的依赖包 -->
 		<dependency>
@@ -147,7 +162,7 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
-			<version>${spring.version}</version>
+			<version>${springframework.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<!-- 单元测试使用包 -->
