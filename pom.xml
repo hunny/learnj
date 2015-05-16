@@ -158,6 +158,17 @@
 		    <artifactId>org.apache.felix.gogo.shell</artifactId>
 		    <version>0.10.0</version>
 		</dependency>
+		<!-- Case Server & Client -->
+		<dependency>
+		    <groupId>org.jasig.cas</groupId>
+		    <artifactId>cas-server-core</artifactId>
+		    <version>4.0.1</version>
+		</dependency>
+		<!-- <dependency>
+		    <groupId>org.jasig.cas.client</groupId>
+		    <artifactId>cas-client-core</artifactId>
+		    <version>3.3.3</version>
+		</dependency> -->
 		<!-- spring与junit整合的单元测试使用包 -->
 		<dependency>
 			<groupId>org.springframework</groupId>
