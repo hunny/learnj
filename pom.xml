@@ -87,6 +87,37 @@
             <artifactId>hibernate-validator</artifactId>
             <version>5.1.2.Final</version>
         </dependency>
+        <!-- Apache IPO dependency -->
+        <dependency>
+		    <groupId>org.apache.poi</groupId>
+		    <artifactId>poi</artifactId>
+		    <version>3.12</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.apache.poi</groupId>
+		    <artifactId>poi-ooxml</artifactId>
+		    <version>3.12</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.apache.poi</groupId>
+		    <artifactId>poi-ooxml-schemas</artifactId>
+		    <version>3.12</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.apache.poi</groupId>
+		    <artifactId>poi-excelant</artifactId>
+		    <version>3.12</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.apache.poi</groupId>
+		    <artifactId>poi-examples</artifactId>
+		    <version>3.12</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.apache.poi</groupId>
+		    <artifactId>poi-scratchpad</artifactId>
+		    <version>3.12</version>
+		</dependency>
 		<!-- 自动注入时的依赖包 -->
 		<dependency>
 			<groupId>org.aspectj</groupId>
@@ -142,22 +173,6 @@
 		    <artifactId>wsdl4j</artifactId>
 		    <version>1.6.3</version>
 		</dependency>
-		<!-- osgi所需依赖包 -->
-		<dependency>
-			<groupId>org.apache.felix</groupId>
-			<artifactId>org.apache.felix.gogo.runtime</artifactId>
-			<version>0.16.2</version>
-		</dependency>
-		<dependency>
-		    <groupId>org.apache.felix</groupId>
-		    <artifactId>org.apache.felix.gogo.command</artifactId>
-		    <version>0.14.0</version>
-		</dependency>
-		<dependency>
-		    <groupId>org.apache.felix</groupId>
-		    <artifactId>org.apache.felix.gogo.shell</artifactId>
-		    <version>0.10.0</version>
-		</dependency>
 		<!-- Case Server & Client -->
 		<dependency>
 		    <groupId>org.jasig.cas</groupId>
@@ -185,4 +200,28 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<!-- 2.8.0-01 and later require maven-compiler-plugin 3.1 or higher -->
+				<version>3.3</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>com.atlassian.maven.plugins</groupId>
+				<artifactId>maven-clover2-plugin</artifactId>
+				<version>4.0.4</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-eclipse-plugin</artifactId>
+				<version>2.9</version>
+			</plugin>
+		</plugins>
+	</build>
 </project>
