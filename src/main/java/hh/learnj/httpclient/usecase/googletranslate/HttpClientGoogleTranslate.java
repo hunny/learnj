@@ -11,7 +11,6 @@ import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
-import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
@@ -20,8 +19,6 @@ import org.apache.http.HttpHost;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
@@ -49,6 +46,7 @@ public class HttpClientGoogleTranslate {
 	        
         	HttpHost proxy = new HttpHost("127.0.0.1", 8087);
         	DynamicProxyRoutePlanner routePlanner = new DynamicProxyRoutePlanner(proxy);
+			
 			httpclient = HttpClients.custom()
 				    .setRoutePlanner(routePlanner).setSSLHostnameVerifier(new HostnameVerifier() {
 						@Override
@@ -56,7 +54,8 @@ public class HttpClientGoogleTranslate {
 								SSLSession session) {
 							return true;
 						}
-				    }).build();
+				    })
+				    .build();
 			// 创建httpget.
 			HttpGet httpget = new HttpGet(urlBuilder(msg));
 			logger.info("============> executing request " + httpget.getURI());
