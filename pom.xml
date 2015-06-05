@@ -118,6 +118,16 @@
 		    <artifactId>poi-scratchpad</artifactId>
 		    <version>3.12</version>
 		</dependency>
+		<dependency>
+		    <groupId>commons-beanutils</groupId>
+		    <artifactId>commons-beanutils-core</artifactId>
+		    <version>1.8.3</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.codehaus.jackson</groupId>
+		    <artifactId>jackson-mapper-asl</artifactId>
+		    <version>1.9.13</version>
+		</dependency>
 		<!-- 自动注入时的依赖包 -->
 		<dependency>
 			<groupId>org.aspectj</groupId>
