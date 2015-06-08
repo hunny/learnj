@@ -33,12 +33,13 @@ public class TestGenericPerformance {
 	@Test
 	public void common() {
 		for (int n = 0; n < i; n++) {
-			Double object = (Double)getObject("" + n);
+			Double object = getObject("" + n);
 		}
 	}
 	
-	public Object getObject(String key) {
-		return map.get(key);
+	public Double getObject(String key) {
+		Double d = (Double)map.get(key);
+		return d;
 	}
 	
 	public <T> T getT(String key) {
