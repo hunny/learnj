@@ -15,6 +15,8 @@ public class TestGenericPerformance {
 	
 	protected int i = 10000;
 	protected Map<String, Object> map = new HashMap<String, Object>();
+	protected Double g = new Double(0);
+	protected Double c = new Double(0);
 	
 	@Before
 	public void before() {
@@ -22,29 +24,31 @@ public class TestGenericPerformance {
 			map.put("" + n, new Double(Math.random()));
 		}
 	}
-	
+
 	@Test
-	public void generic() {
+	public void genericTest() {
+		long start = System.currentTimeMillis();
 		for (int n = 0; n < i; n++) {
 			Double d =  getT("" + n);
 		}
+		System.out.println("generic:" + (System.currentTimeMillis() - start));
 	}
 	
 	@Test
-	public void common() {
+	public void commonTest() {
+		long start = System.currentTimeMillis();
 		for (int n = 0; n < i; n++) {
-			Double object = getObject("" + n);
+			Double d = getObject("" + n);
 		}
+		System.out.println("common:" + (System.currentTimeMillis() - start));
 	}
 	
 	public Double getObject(String key) {
-		Double d = (Double)map.get(key);
-		return d;
+		return (Double)map.get(key);
 	}
 	
 	public <T> T getT(String key) {
-		T t = (T)map.get(key);
-		return t;
+		return (T)map.get(key);
 	}
 
 }
