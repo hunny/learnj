@@ -5,7 +5,7 @@ import hh.learnj.designpattern.builder.step6.MealBuilder;
 
 /**
  * BuiderPatternDemo uses MealBuider to demonstrate builder pattern.
- * 
+ * http://www.tutorialspoint.com/design_pattern/builder_pattern.htm
  * @author hunnyhu
  *
  */
