@@ -8,7 +8,7 @@ import hh.learnj.designpattern.abstractfactory.step7.FactoryProducer;
 /**
  * Use the FactoryProducer to get AbstractFactory in order to get factories of
  * concrete classes by passing an information such as type.
- * 
+ * Details:http://www.tutorialspoint.com/design_pattern/abstract_factory_pattern.htm
  * @author hunnyhu
  *
  */
