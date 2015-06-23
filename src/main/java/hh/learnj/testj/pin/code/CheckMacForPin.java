@@ -27,7 +27,20 @@ public class CheckMacForPin {
 	}
 
 	public static void main(String[] args) {
-		new CheckMacForPin().readLine();
+		new CheckMacForPin().readDb();
+	}
+	
+	public void readDb() {
+		List<Map<String, Object>> list = util.query("select * from reaver_cracked");
+		if (null != list && !list.isEmpty()) {
+			for (Map<String, Object> m : list) {
+				String BSSID = (String)m.get("BSSID");
+				if (doMatch(BSSID)) {
+					logger.info("[+][-] Found src[-]" + m + "[-]");
+					logger.info("\n");
+				}
+			}
+		}
 	}
 	
 	public void readLine() {
@@ -44,7 +57,9 @@ public class CheckMacForPin {
 				if (null != line && line.startsWith("//") && line.indexOf(":") > 0) {
 					String [] tmp = line.split(" ");
 					String BSSID = tmp[0].replaceAll("//\t*", "");
-					doMatch(BSSID, line);
+					if (doMatch(BSSID)) {
+						logger.info(line);
+					}
 				}
 			}
 		} catch (Exception e) {
@@ -60,24 +75,28 @@ public class CheckMacForPin {
 		}
 	}
 	
-	public void doMatch(String BSSID, String info) {
-		logger.debug("Checking mac [->] " + BSSID);
+	public boolean doMatch(String BSSID) {
+		boolean result = false;
+//		logger.debug("Checking mac [->] " + BSSID);
 		tenda.setBssid(BSSID);
 		if (tenda.isTendaSpecial()) {
-			logger.debug("[+][-][-][-]=======> Find Tenda " + BSSID + " match pin code " + tenda.getPinCode());
-			logger.debug("[+][-][-][-]=======> " + info);
+			logger.debug("[+][-] Found Tenda [-]" + BSSID + "[-] match pin code [-]" + tenda.getPinCode() + "[-]");
+			result = true;
 		}
-		List<Map<String, Object>> list = util.query("select * from wash_reaver where bssid = '" + BSSID + "'");
+		List<Map<String, Object>> list = util.query("select * from " + JdbcSqliteUtil.REAVER_WASH + " where bssid = '" + BSSID + "'");
 		if (null == list || list.isEmpty()) {
-			list = util.query("select * from wash_reaver ");
+			list = util.query("select * from " + JdbcSqliteUtil.REAVER_WASH);
 		}
 		for (Map<String, Object> m : list) {
 			String ssid = (String)m.get("BSSID");
-			if (ssid.toLowerCase().contains(BSSID) || BSSID.toLowerCase().contains(ssid)) {
-				logger.debug("[+][-][-][-]=======> Find match:" + m);
-				logger.debug("[+][-][-][-]=======> " + info);
+			ssid = ssid.toLowerCase();
+			BSSID = BSSID.toLowerCase();
+			if (ssid.contains(BSSID) || BSSID.contains(ssid)) {
+				logger.debug("[+][-] Found match [-]" + m + "[-]");
+				result = true;
 			}
 		}
+		return result;
 	}
 
 }

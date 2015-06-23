@@ -101,7 +101,7 @@ public class CrackFastPinCode {
 							+ ":" + arr[0].substring(10, 12);
 					String PIN = arr[1];
 					logger.debug(BSSID + ", " + PIN);
-					List<Map<String, Object>> list = util.query("select * from wash_reaver where bssid = '" + BSSID + "'");
+					List<Map<String, Object>> list = util.query("select * from reaver_wash where bssid = '" + BSSID + "'");
 					if (null == list || list.isEmpty()) {
 						Map<String, Object> values = new HashMap<String, Object>();
 						values.put("BSSID", BSSID);

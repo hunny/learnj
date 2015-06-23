@@ -17,6 +17,9 @@ import org.apache.log4j.Logger;
 
 public class JdbcSqliteUtil {
 
+	public static final String REAVER_WASH = "REAVER_WASH";
+	public static final String REAVER_CRACKED = "REAVER_CRACKED";
+	
 	private static Logger logger = Logger.getLogger(JdbcSqliteUtil.class);
 
 	// STEP 1: JDBC driver name and database URL
@@ -30,19 +33,23 @@ public class JdbcSqliteUtil {
 		for (Map<String, Object> map : list) {
 			System.out.println("====>" + map);
 		}
-		Map<String, Object> values = new HashMap<String, Object>();
-		values.put("BSSID", "D0:C7:C0:C8:00:CE");
-		values.put("ESSID", "FAST_00CE");
-//		jdbc.save("WASH_REAVER", values);
-		Map<String, Object> wheres = new HashMap<String, Object>();
-		wheres.put("ID", 1);
-		jdbc.update("WASH_REAVER", values, wheres);
+		logger.info(jdbc.createTabalReaverWash());
+		logger.info(jdbc.createTabalReaverCracked());
+//		Map<String, Object> values = new HashMap<String, Object>();
+//		values.put("BSSID", "D0:C7:C0:C8:00:CE");
+//		values.put("ESSID", "FAST_00CE");
+//		jdbc.save("REAVER_WASH", values);
+//		Map<String, Object> wheres = new HashMap<String, Object>();
+//		wheres.put("ID", 1);
+//		jdbc.update("REAVER_WASH", values, wheres);
 	}
 
-	protected String createTabalWashReaver() {
+	public String createTabalReaverWash() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(" CREATE TABLE ");
-		buffer.append(" WASH_REAVER ");
+		buffer.append(" ");
+		buffer.append(REAVER_WASH);
+		buffer.append(" ");
 		buffer.append(" ( ");
 		buffer.append(" ID integer primary key autoincrement");
 		buffer.append(" ,");
@@ -54,11 +61,41 @@ public class JdbcSqliteUtil {
 		buffer.append(" ,");
 		buffer.append(" COLTD varchar(50) default null");
 		buffer.append(" ,");
+		buffer.append(" DATE_CREATED timestamp default null");
+		buffer.append(" ,");
+		buffer.append(" LAST_UPDATED timestamp default null");
+		buffer.append(" )");
+		return buffer.toString();
+	}
+	
+	public String createTabalReaverCracked() {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(" CREATE TABLE ");
+		buffer.append(" ");
+		buffer.append(REAVER_CRACKED);
+		buffer.append(" ");
+		buffer.append(" ( ");
+		buffer.append(" ID integer primary key autoincrement");
+		buffer.append(" ,");
+		buffer.append(" BSSID varchar(20) default null");
+		buffer.append(" ,");
+		buffer.append(" ESSID varchar(50) default null");
+		buffer.append(" ,");
+		buffer.append(" PIN varchar(8) default null");
+		buffer.append(" ,");
+		buffer.append(" PASSWORD varchar(50) default null");
+		buffer.append(" ,");
+		buffer.append(" COLTD varchar(50) default null");
+		buffer.append(" ,");
 		buffer.append(" CHANNEL varchar(2) default null");
 		buffer.append(" ,");
 		buffer.append(" RSSI varchar(3) default null");
 		buffer.append(" ,");
-		buffer.append(" SECURITY varchar(50) default null");
+		buffer.append(" WPS_VERSION varchar(10) default null");
+		buffer.append(" ,");
+		buffer.append(" WPS_LOCKED varchar(10) default null");
+		buffer.append(" ,");
+		buffer.append(" REMARK varchar(200) default null");
 		buffer.append(" ,");
 		buffer.append(" DATE_CREATED timestamp default null");
 		buffer.append(" ,");
@@ -104,12 +141,20 @@ public class JdbcSqliteUtil {
 		});
 	}
 	
+	public Integer saveToReaverCracked(final Map<String, Object> values) {
+		return save(REAVER_CRACKED, values);
+	}
+	
+	public Integer updateToReaverCracked(final Map<String, Object> values, final Map<String, Object> wheres) {
+		return update(REAVER_CRACKED, values, wheres);
+	}
+	
 	public Integer saveToWashReaver(final Map<String, Object> values) {
-		return save("WASH_REAVER", values);
+		return save(REAVER_WASH, values);
 	}
 	
 	public Integer updateToWashReaver(final Map<String, Object> values, final Map<String, Object> wheres) {
-		return update("WASH_REAVER", values, wheres);
+		return update(REAVER_WASH, values, wheres);
 	}
 	
 	public Integer update(final String table, final Map<String, Object> values, final Map<String, Object> wheres) {

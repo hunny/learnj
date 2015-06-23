@@ -24,12 +24,13 @@ public class ReadExcelPin {
 	static HSSFRow row;
 
 	public static void main(String[] args) throws Exception {
-		readPin4();
+//		readPin4();
+		read1500();
 	}
 	
 	public static void readPin4() throws Exception {
 		FileInputStream fis = new FileInputStream(new File(
-				"/Users/hunnyhu/Downloads/tmp/MAC对应PIN码表(MAC对应PIN前4位).xls"));
+				"/Users/hunnyhu/Downloads/MAC对应PIN码表(MAC对应PIN前4位).xls"));
 		HSSFWorkbook workbook = new HSSFWorkbook(fis);
 		HSSFSheet spreadsheet = workbook.getSheetAt(0);
 		Iterator<Row> rowIterator = spreadsheet.iterator();
@@ -40,16 +41,26 @@ public class ReadExcelPin {
 			BSSID = handleBSSID(BSSID);
 			String PIN = getCellValue(row.getCell(1));
 			String ESSID = getCellValue(row.getCell(2));
-			List<Map<String, Object>> list = util.query("select * from wash_reaver where bssid = '" + BSSID + "'");
+			List<Map<String, Object>> list = util.query("select * from reaver_wash where bssid = '" + BSSID + "'");
+			Map<String, Object> values = new HashMap<String, Object>();
+			values.put("BSSID", BSSID);
+			values.put("PIN", PIN);
+			values.put("ESSID", ESSID);
 			if (null == list || list.isEmpty()) {
-				Map<String, Object> values = new HashMap<String, Object>();
-				values.put("BSSID", BSSID);
-				values.put("PIN", PIN);
-				values.put("ESSID", ESSID);
 				logger.debug(values);
 				util.saveToWashReaver(values);
 			} else {
-				logger.debug("====================> " + BSSID + " already existed." + PIN);
+				for (Map<String, Object> m : list) {
+					String mPIN = (String)m.get("PIN");
+					if (PIN.length() > mPIN.length()) {
+						Map<String, Object> wheres = new HashMap<String, Object>();
+						wheres.put("ID", m.get("ID"));
+						util.updateToWashReaver(values, wheres);
+						logger.debug("[+] [-]" + BSSID + " already existed." + mPIN + " will be updated by " + PIN);
+					} else {
+						logger.debug("[+] [-]" + BSSID + " already existed." + PIN);
+					}
+				}
 			}
 			System.out.println();
 		}
@@ -64,31 +75,44 @@ public class ReadExcelPin {
 	 */
 	public static void read1500() throws Exception {
 		FileInputStream fis = new FileInputStream(new File(
-				"/Users/hunnyhu/Downloads/tmp/1500个无线路由器pin码表.xls"));
+				"/Users/hunnyhu/Downloads/1500个无线路由器pin码表.xls"));
 		HSSFWorkbook workbook = new HSSFWorkbook(fis);
 		HSSFSheet spreadsheet = workbook.getSheetAt(0);
 		Iterator<Row> rowIterator = spreadsheet.iterator();
 		JdbcSqliteUtil util = new JdbcSqliteUtil();
+		boolean first = true;
 		while (rowIterator.hasNext()) {
 			row = (HSSFRow) rowIterator.next();
+			if (first) {
+				first = false;
+				continue;
+			}
 			String BSSID = getCellValue(row.getCell(3));
 			BSSID = handleBSSID(BSSID);
 			String PIN = getCellValue(row.getCell(4));
 			String ESSID = getCellValue(row.getCell(2));
 			String COLTD = getCellValue(row.getCell(1));
-			String CHANNEL = getCellValue(row.getCell(5));
-			List<Map<String, Object>> list = util.query("select * from wash_reaver where bssid = '" + BSSID + "'");
+			List<Map<String, Object>> list = util.query("select * from reaver_wash where bssid = '" + BSSID + "'");
+			Map<String, Object> values = new HashMap<String, Object>();
+			values.put("BSSID", BSSID);
+			values.put("PIN", PIN);
+			values.put("ESSID", ESSID);
+			values.put("COLTD", COLTD);
 			if (null == list || list.isEmpty()) {
-				Map<String, Object> values = new HashMap<String, Object>();
-				values.put("BSSID", BSSID);
-				values.put("PIN", PIN);
-				values.put("ESSID", ESSID);
-				values.put("COLTD", COLTD);
-				values.put("CHANNEL", CHANNEL);
 				logger.debug(values);
 				util.saveToWashReaver(values);
 			} else {
-				logger.debug("====================> " + BSSID + " already existed." + PIN);
+				for (Map<String, Object> m : list) {
+					String mPIN = (String)m.get("PIN");
+					if (PIN.length() > mPIN.length()) {
+						Map<String, Object> wheres = new HashMap<String, Object>();
+						wheres.put("ID", m.get("ID"));
+						util.updateToWashReaver(values, wheres);
+						logger.debug("[+] [-]" + BSSID + " already existed." + mPIN + " will be updated by " + PIN);
+					} else {
+						logger.debug("[+] [-]" + BSSID + " already existed." + PIN);
+					}
+				}
 			}
 			System.out.println();
 		}
