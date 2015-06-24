@@ -31,6 +31,8 @@ import hh.learnj.designpattern.businessdelegate.step5.Client;
  * BusinessDelegatePatternDemo, our demo class, will use BusinessDelegate and
  * Client to demonstrate use of Business Delegate pattern.
  * 
+ * http://www.tutorialspoint.com/design_pattern/business_delegate_pattern.htm
+ * 
  * @author hunnyhu
  *
  */
