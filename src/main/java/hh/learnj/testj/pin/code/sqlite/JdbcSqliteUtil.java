@@ -324,8 +324,10 @@ public class JdbcSqliteUtil {
 	}
 
 	protected <T> T createStatement(SqliteConnect<T> statement) {
-		return createStatement(statement, JdbcSqliteUtil.class.getResource("/")
-				.getPath().replaceFirst("target/classes/", "readme/sqlite.db"));
+		String path = JdbcSqliteUtil.class.getResource("/")
+				.getPath().replaceFirst("target/classes/", "readme/sqlite.db");
+			path = "/Users/hunnyhu/work/workspace/database/wifi-crack/sqlite.db";
+		return createStatement(statement, path);
 	}
 
 	protected <T> T createStatement(SqliteConnect<T> connection, String path) {
