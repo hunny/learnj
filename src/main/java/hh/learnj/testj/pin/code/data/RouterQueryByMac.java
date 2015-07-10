@@ -25,7 +25,7 @@ import org.jsoup.select.Elements;
 
 public class RouterQueryByMac {
 	
-	private static Logger logger = Logger.getLogger(TumblrDownloadImages.class);
+	private static Logger logger = Logger.getLogger(RouterQueryByMac.class);
 
 	private CloseableHttpClient httpclient = HttpClients.createDefault();
 	private JdbcSqliteUtil db = new JdbcSqliteUtil();

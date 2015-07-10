@@ -49,7 +49,7 @@ public class CollectMacBeCracked {
 					values.put("WPS_VERSION", WPS_VERSION);
 					values.put("WPS_LOCKED", WPS_LOCKED);
 					values.put("ESSID", ESSID);
-					values.put("REMARK", "湾流汇南边");
+					values.put("REMARK", "定威路28弄");
 					List<Map<String, Object>> list = util.query("select * from " + JdbcSqliteUtil.REAVER_CRACKED + " where bssid = '" + BSSID + "'");
 					if (null == list || list.isEmpty()) {
 						logger.info("[+][-] " + ESSID + " [-] " + BSSID + " [-] saving....");

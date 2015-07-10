@@ -31,7 +31,7 @@ public class CheckMacForPin {
 	}
 	
 	public void readDb() {
-		List<Map<String, Object>> list = util.query("select * from reaver_cracked");
+		List<Map<String, Object>> list = util.query("select * from reaver_cracked where remark = '定威路28弄'");
 		if (null != list && !list.isEmpty()) {
 			for (Map<String, Object> m : list) {
 				String BSSID = (String)m.get("BSSID");
