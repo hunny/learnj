@@ -7,9 +7,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -19,6 +16,8 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class CollectHttpClientNetworkPin {
 	
@@ -51,12 +50,12 @@ public class CollectHttpClientNetworkPin {
 		HttpResponse response = httpclient.execute(httpget);
 		HttpEntity entity = response.getEntity();
 		String html = EntityUtils.toString(entity);
-		JSONObject object = JSONObject.fromObject(html);
+		JSONObject object = new JSONObject(html);
 		JSONArray arr = object.getJSONArray("data");
-		if (null == arr || arr.size() <= 0) {
+		if (null == arr || arr.length() <= 0) {
 			return;
 		}
-		for (int i = 0; i < arr.size(); i++) {
+		for (int i = 0; i < arr.length(); i++) {
 			JSONObject obj = arr.getJSONObject(i);
 //			System.out.print("obj = " + obj);
 			JSONArray text = obj.getJSONArray("text");
