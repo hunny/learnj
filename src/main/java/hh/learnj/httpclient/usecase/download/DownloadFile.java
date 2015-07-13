@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.commons.lang.time.DurationFormatUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -18,10 +19,10 @@ public class DownloadFile {
 	private static Logger logger = Logger.getLogger(DownloadFile.class);
 
 	public static void main(String[] args) {
-		download("http://download.ted.com/talks/Rives_4AM_2007-480p.mp4",
-				"D:/mp4s/");
-//		download("http://img.my.csdn.net/uploads/201211/29/1354159363_7245.PNG",
+//		download("http://download.ted.com/talks/Rives_4AM_2007-480p.mp4",
 //				"D:/mp4s/");
+		download("http://img.my.csdn.net/uploads/201211/29/1354159363_7245.PNG",
+				"D:/mp4s/");
 	}
 
 	public static void download(String src, String local) {
@@ -39,6 +40,7 @@ public class DownloadFile {
 	public static void download(CloseableHttpClient httpclient, String url,
 			String filePath) throws ClientProtocolException, IOException {
 		HttpGet httpget = new HttpGet(url);
+		long start = System.currentTimeMillis();
 		HttpResponse response = httpclient.execute(httpget);
 		HttpEntity entity = response.getEntity();
 		if (entity != null) {
@@ -51,14 +53,27 @@ public class DownloadFile {
 				fos.write(inByte);
 				count += 1;
 				if (count % 1024 == 0) {
-					logger.info("total:" + length + ", finished:" + count + ", precent:" + (count * 100.0 / length) + "%");
+					logger.info("total:" + length + ", precent:" + String.format("%05.2f", count * 100.0 / length) + "%, time: " + longToTime(System.currentTimeMillis() - start) + ", finished:" + count);
 					fos.flush();
 				}
 			}
-			logger.info("total:" + length + ", finished:" + count + ", precent:" + (count * 100.0 / length) + "%");
+			logger.info("total:" + length + ", precent:" + (count * 100.0 / length) + "%, time: " + longToTime(System.currentTimeMillis() - start) + ", finished:" + count);
 			is.close();
 			fos.close();
 		}
+	}
+	
+	public static String longToTime(long time) {
+//		Date date = new Date(time);
+//		DateFormat formatter = new SimpleDateFormat("HH:mm:ss SSS");
+//		return formatter.format(date);
+		
+//		long second = (time / 1000) % 60;
+//		long minute = (time / (1000 * 60)) % 60;
+//		long hour = (time / (1000 * 60 * 60)) % 24;
+//		return String.format("%02d:%02d:%02d:%d", hour, minute, second, time);
+		
+		return DurationFormatUtils.formatDuration(time, "HH:mm:ss,SSS");
 	}
 
 }
