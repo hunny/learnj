@@ -26,6 +26,7 @@ public class DownloadFile {
 
 	public static void download(String src, String local) {
 		String[] srcs = src.split("/");
+		logger.info("download :" + src);
 		logger.info("file name:" + srcs[srcs.length - 1]);
 		try {
 			download(HttpClients.createDefault(), src, local
@@ -42,7 +43,6 @@ public class DownloadFile {
 		HttpEntity entity = response.getEntity();
 		if (entity != null) {
 			long length = entity.getContentLength();
-			logger.info(length);
 			InputStream is = entity.getContent();
 			FileOutputStream fos = new FileOutputStream(new File(filePath));
 			int inByte;
@@ -51,11 +51,11 @@ public class DownloadFile {
 				fos.write(inByte);
 				count += 1;
 				if (count % 1024 == 0) {
-					System.out.println(count + ", " + (count * 100.0 / length) + "%");
+					logger.info("total:" + length + ", finished:" + count + ", precent:" + (count * 100.0 / length) + "%");
 					fos.flush();
 				}
 			}
-			System.out.println(count + ", " + (count * 100.0 / length) + "%");
+			logger.info("total:" + length + ", finished:" + count + ", precent:" + (count * 100.0 / length) + "%");
 			is.close();
 			fos.close();
 		}
