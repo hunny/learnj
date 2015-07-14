@@ -17,8 +17,8 @@ public class ClientExecuteProxy {
     public static void main(String[] args)throws Exception {
         CloseableHttpClient httpclient = HttpClients.createDefault();
         try {
-            HttpHost target = new HttpHost("localhost", 443, "https");
-            HttpHost proxy = new HttpHost("127.0.0.1", 8080, "http");
+            HttpHost target = new HttpHost("www.google.com", 443, "https");
+            HttpHost proxy = new HttpHost("127.0.0.1", 8087, "http");
 
             RequestConfig config = RequestConfig.custom()
                     .setProxy(proxy)
