@@ -21,17 +21,26 @@ public class DownloadFile {
 	public static void main(String[] args) {
 //		download("http://download.ted.com/talks/Rives_4AM_2007-480p.mp4",
 //				"D:/mp4s/");
-		download("http://img.my.csdn.net/uploads/201211/29/1354159363_7245.PNG",
-				"D:/mp4s/");
+//		download("http://img.my.csdn.net/uploads/201211/29/1354159363_7245.PNG",
+//				"D:/mp4s/");
+		download("http://180.97.83.161:443/down/5b376a6cb488e132e8ec3ec49de8460e-30356480/%E7%AC%AC%E4%B8%80%E9%9B%86%E6%97%A0%E7%BA%BFWIFI%E5%AF%86%E7%A0%81PJ%E6%80%BB%E8%BF%B0.avi?cts=dx-f-183A131A105A2342678604&ctp=183A131A105A234&ctt=1436968764&limit=2&spd=1200000&ctk=72d120f21d642beb48b4dd0ab238edc7&chk=5b376a6cb488e132e8ec3ec49de8460e-30356480&mtd=1",
+				"D:/mp4s/", "第一集无线WIFI密码PJ总述.avi");
+	}
+	
+	public static void download(String src, String local) {
+		download(src, local, null);
 	}
 
-	public static void download(String src, String local) {
+	public static void download(String src, String local, String localName) {
 		String[] srcs = src.split("/");
 		logger.info("download :" + src);
 		logger.info("file name:" + srcs[srcs.length - 1]);
 		try {
+			if (null == localName) {
+				localName = srcs[srcs.length - 1];
+			}
 			download(HttpClients.createDefault(), src, local
-					+ srcs[srcs.length - 1]);
+					+ localName);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
