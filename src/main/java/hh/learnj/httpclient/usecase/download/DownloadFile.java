@@ -23,7 +23,7 @@ public class DownloadFile {
 //				"D:/mp4s/");
 //		download("http://img.my.csdn.net/uploads/201211/29/1354159363_7245.PNG",
 //				"D:/mp4s/");
-		download("http://180.97.83.161:443/down/5b376a6cb488e132e8ec3ec49de8460e-30356480/%E7%AC%AC%E4%B8%80%E9%9B%86%E6%97%A0%E7%BA%BFWIFI%E5%AF%86%E7%A0%81PJ%E6%80%BB%E8%BF%B0.avi?cts=dx-f-183A131A105A2342678604&ctp=183A131A105A234&ctt=1436968764&limit=2&spd=1200000&ctk=72d120f21d642beb48b4dd0ab238edc7&chk=5b376a6cb488e132e8ec3ec49de8460e-30356480&mtd=1",
+		download("http://180.97.83.161:443/down/5b376a6cb488e132e8ec3ec49de8460e-30356480/%E7%AC%AC%E4%B8%80%E9%9B%86%E6%97%A0%E7%BA%BFWIFI%E5%AF%86%E7%A0%81PJ%E6%80%BB%E8%BF%B0.avi?cts=dx-f-101A230A3A22777623&ctp=101A230A3A2&ctt=1437008702&limit=2&spd=1200000&ctk=b4b0ae0e655501aa2598974426ab4f70&chk=5b376a6cb488e132e8ec3ec49de8460e-30356480&mtd=1",
 				"D:/mp4s/", "第一集无线WIFI密码PJ总述.avi");
 	}
 	
@@ -55,18 +55,20 @@ public class DownloadFile {
 		if (entity != null) {
 			long length = entity.getContentLength();
 			InputStream is = entity.getContent();
-			FileOutputStream fos = new FileOutputStream(new File(filePath));
+			File file = new File(filePath);
+			String fileName = file.getName();
+			FileOutputStream fos = new FileOutputStream(file);
 			int inByte;
 			long count = 0;
 			while ((inByte = is.read()) != -1) {
 				fos.write(inByte);
 				count += 1;
 				if (count % 1024 == 0) {
-					logger.info("total:" + length + ", precent:" + String.format("%05.2f", count * 100.0 / length) + "%, time: " + longToTime(System.currentTimeMillis() - start) + ", finished:" + count);
+					logger.info(fileName + ", total:" + length + ", precent:" + String.format("%05.2f", count * 100.0 / length) + "%, time: " + longToTime(System.currentTimeMillis() - start) + ", finished:" + count);
 					fos.flush();
 				}
 			}
-			logger.info("total:" + length + ", precent:" + (count * 100.0 / length) + "%, time: " + longToTime(System.currentTimeMillis() - start) + ", finished:" + count);
+			logger.info(fileName + ", total:" + length + ", precent:" + (count * 100.0 / length) + "%, time: " + longToTime(System.currentTimeMillis() - start) + ", finished:" + count);
 			is.close();
 			fos.close();
 		}
