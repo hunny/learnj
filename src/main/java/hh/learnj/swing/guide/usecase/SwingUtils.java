@@ -1,9 +1,12 @@
 package hh.learnj.swing.guide.usecase;
 
+import java.awt.Component;
+
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
-public class UseCaseSwingUtils {
+public class SwingUtils {
 
 	/**
 	 * Returns the class name of the installed LookAndFeel with a name
@@ -21,5 +24,15 @@ public class UseCaseSwingUtils {
 			}
 		}
 		return null;
+	}
+	
+	public static void updateComponentLookAndFeelUI(Component component, String name) {
+		try {
+			UIManager
+					.setLookAndFeel(getLookAndFeelClassName(name));
+			SwingUtilities.updateComponentTreeUI(component);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }
