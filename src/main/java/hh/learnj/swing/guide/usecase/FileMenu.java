@@ -20,6 +20,7 @@ public class FileMenu extends JMenu {
 		this.setText("File");
 		this.setMnemonic(KeyEvent.VK_F);
 		this.add(new LookAndFeelMenu(frame));
+		this.add(new QRCodeMenuItem(frame));
 		this.add(new ExitMenuItem());
 	}
 

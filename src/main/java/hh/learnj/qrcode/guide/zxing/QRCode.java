@@ -41,7 +41,23 @@ public class QRCode {
 				+ readQRCode(filePath, charset, hintMap));
 
 	}
-
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static String writeInfo(String filePath, String string) throws Exception {
+		String charset = "UTF-8"; // or "ISO-8859-1"
+		Map hintMap = new HashMap();
+		hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
+		createQRCode(string, filePath, charset, hintMap, 200, 200);
+		return filePath;
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static String readInfo(String filePath) throws Exception {
+		Map hintMap = new HashMap();
+		hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
+		return readQRCode(filePath, "UTF-8", hintMap);
+	}
+	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void createQRCode(String qrCodeData, String filePath,
 			String charset, Map hintMap, int qrCodeheight, int qrCodewidth)
