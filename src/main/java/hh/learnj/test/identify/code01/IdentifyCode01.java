@@ -11,12 +11,12 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 
 /**
- * http://blog.csdn.net/problc/article/details/5794460 
- * 验证码识别基本分四步，图片预处理，分割，训练，识别
+ * http://blog.csdn.net/problc/article/details/5794460 验证码识别基本分四步，图片预处理，分割，训练，识别
  * 最简单的(固定大小，固定位置，固定字体)
+ * 
  * @author Hunny.Hu
  */
-public class IdentifiCode01 {
+public class IdentifyCode01 {
 
 	/**
 	 * 根据亮度设个阈值
@@ -72,6 +72,7 @@ public class IdentifiCode01 {
 
 	/**
 	 * 图片切片
+	 * 
 	 * @param img
 	 * @return
 	 * @throws Exception
@@ -88,6 +89,7 @@ public class IdentifiCode01 {
 
 	/**
 	 * 加载训练的图片及数据
+	 * 
 	 * @return
 	 * @throws Exception
 	 */
@@ -101,6 +103,12 @@ public class IdentifiCode01 {
 		return map;
 	}
 
+	/**
+	 * 直接拿分割的图片跟这个十个图片一个像素一个像素的比，相同的点最多的就是结果。
+	 * @param img
+	 * @param map
+	 * @return
+	 */
 	public static String getSingleCharOCR(BufferedImage img,
 			Map<BufferedImage, String> map) {
 		String result = "";
@@ -171,9 +179,11 @@ public class IdentifiCode01 {
 	 * @throws Exception
 	 */
 	public static void main(String[] args) throws Exception {
-		for (int i = 0; i < 30; ++i) {
-			String text = getAllOCR("img//" + i + ".jpg");
-			System.out.println(i + ".jpg = " + text);
-		}
+//		for (int i = 0; i < 30; ++i) {
+//			String text = getAllOCR("img//" + i + ".jpg");
+//			System.out.println(i + ".jpg = " + text);
+//		}
+		BufferedImage img = removeBackgroud("C:/Users/Hunny.hu/Desktop/src_img.png");
+		ImageIO.write(img, "png", new File("C:/Users/Hunny.hu/Desktop/src_img.png"));
 	}
 }
