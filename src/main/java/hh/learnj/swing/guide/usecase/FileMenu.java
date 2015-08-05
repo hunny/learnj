@@ -1,6 +1,7 @@
 package hh.learnj.swing.guide.usecase;
 
 import hh.learnj.swing.guide.usecase.qrcode.QRCodeMenuItem;
+import hh.learnj.swing.guide.usecase.searcher.FinderMenuItem;
 
 import java.awt.event.KeyEvent;
 
@@ -23,6 +24,7 @@ public class FileMenu extends JMenu {
 		this.setMnemonic(KeyEvent.VK_F);
 		this.add(new LookAndFeelMenu(frame));
 		this.add(new QRCodeMenuItem(frame));
+		this.add(new FinderMenuItem(frame));
 		this.add(new ExitMenuItem());
 	}
 

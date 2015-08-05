@@ -3,6 +3,7 @@ package hh.learnj.swing.guide.usecase.qrcode;
 import hh.learnj.qrcode.guide.zxing.QRCode;
 
 import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -17,6 +18,7 @@ import java.io.FileFilter;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JDesktopPane;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
@@ -186,6 +188,14 @@ public class QRCodeInternalFrame extends JInternalFrame implements
 				if (option != JOptionPane.YES_OPTION) {
 					throw new PropertyVetoException("Cancelled", null);
 				}
+				Container container = frame.getContentPane();
+				JDesktopPane desktop = (JDesktopPane)container;
+				JInternalFrame [] frames = desktop.getAllFrames();
+            	for (JInternalFrame mFrame : frames) {
+            		if (mFrame instanceof QRCodeInternalFrame) {
+            			desktop.remove(mFrame);
+            		}
+            	}
 			}
 		}
 	}

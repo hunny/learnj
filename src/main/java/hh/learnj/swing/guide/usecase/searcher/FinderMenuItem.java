@@ -1,4 +1,4 @@
-package hh.learnj.swing.guide.usecase.qrcode;
+package hh.learnj.swing.guide.usecase.searcher;
 
 import java.awt.Container;
 import java.awt.event.ActionEvent;
@@ -11,39 +11,39 @@ import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JMenuItem;
 
-public class QRCodeMenuItem extends JMenuItem {
-
-	private static final long serialVersionUID = -7741212084453396860L;
+public class FinderMenuItem extends JMenuItem {
+	
+	private static final long serialVersionUID = -6288966894526113606L;
 	
 	protected JFrame frame;
 	
-	public QRCodeMenuItem(JFrame frame) {
+	public FinderMenuItem(JFrame frame) {
 		this.frame = frame;
 		init();
 	}
 	
 	protected void init() {
-		this.setText("QRCode");
-		this.setMnemonic(KeyEvent.VK_Q);
-		this.setToolTipText("QRCode action.");
+		this.setText("Find...");
+		this.setMnemonic(KeyEvent.VK_F);
+		this.setToolTipText("File searcher.");
 		this.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				QRCodeInternalFrame internalFrame = null;
+				FinderInternalFrame internalFrame = null;
 				Container container = frame.getContentPane();
 				JDesktopPane desktop = (JDesktopPane)container;
 				if (desktop.getAllFrames().length != 0) {
 	            	JInternalFrame [] frames = desktop.getAllFrames();
 	            	for (JInternalFrame mFrame : frames) {
-	            		if (mFrame instanceof QRCodeInternalFrame) {
-	            			internalFrame = (QRCodeInternalFrame)mFrame;
+	            		if (mFrame instanceof FinderInternalFrame) {
+	            			internalFrame = (FinderInternalFrame)mFrame;
 	            			break;
 	            		}
 	            	}
 //	                desktop.remove(0);
 	            }
             	if (null == internalFrame) {
-            		internalFrame = new QRCodeInternalFrame(frame);
+            		internalFrame = new FinderInternalFrame(frame);
 	                desktop.add(internalFrame);
 	                revalidate();
 	                repaint();
@@ -59,5 +59,4 @@ public class QRCodeMenuItem extends JMenuItem {
 			}
 		});
 	}
-
 }
