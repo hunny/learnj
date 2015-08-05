@@ -1,5 +1,7 @@
 package hh.learnj.swing.guide.usecase;
 
+import hh.learnj.swing.guide.usecase.qrcode.QRCodeMenuItem;
+
 import java.awt.event.KeyEvent;
 
 import javax.swing.JFrame;

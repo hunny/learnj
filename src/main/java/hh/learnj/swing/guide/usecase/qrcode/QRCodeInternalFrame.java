@@ -1,4 +1,4 @@
-package hh.learnj.swing.guide.usecase;
+package hh.learnj.swing.guide.usecase.qrcode;
 
 import hh.learnj.qrcode.guide.zxing.QRCode;
 
