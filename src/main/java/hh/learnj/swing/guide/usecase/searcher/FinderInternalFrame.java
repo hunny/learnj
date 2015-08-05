@@ -15,9 +15,16 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -62,7 +69,7 @@ public class FinderInternalFrame extends JInternalFrame implements
 		status.setText("Loaded.");
 		init();
 		addVetoableChangeListener(this);
-		
+
 		typeField.setText(".\\.sql$");
 	}
 
@@ -76,7 +83,7 @@ public class FinderInternalFrame extends JInternalFrame implements
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridBagLayout());
 
-//		panel.setBorder(BorderFactory.createTitledBorder("Details..."));
+		// panel.setBorder(BorderFactory.createTitledBorder("Details..."));
 		panel.setBorder(BorderFactory.createEtchedBorder());
 
 		GridBagConstraints c = new GridBagConstraints();
@@ -132,32 +139,38 @@ public class FinderInternalFrame extends JInternalFrame implements
 					JOptionPane.showMessageDialog(frame, "File not existed ");
 				} else {
 					if (StringUtils.isBlank(textField.getText())) {
-						JOptionPane.showMessageDialog(frame, "File Text is blank.");
+						JOptionPane.showMessageDialog(frame,
+								"File Text is blank.");
 						return;
 					}
 					if (StringUtils.isBlank(typeField.getText())) {
-						JOptionPane.showMessageDialog(frame, "File Type is blank.");
+						JOptionPane.showMessageDialog(frame,
+								"File Type is blank.");
 						return;
 					}
 					try {
 						long start = System.currentTimeMillis();
 						status.setText("Finding...");
-						List<String> result = check(file, textField.getText(), typeField.getText());
-						status.setText("Finished. Result:" + result.size() + ". " + (System.currentTimeMillis() - start) + "ms.");
+						List<String> result = check(file, textField.getText(),
+								typeField.getText());
+						status.setText("Finished. Result:" + result.size()
+								+ ". Spend "
+								+ (System.currentTimeMillis() - start) + "ms.");
 						console.setText("");
 						for (String s : result) {
-							System.out.print(s);
+//							System.out.print(s);
 							console.append(s);
 						}
 					} catch (Exception e) {
+						e.printStackTrace();
 						JOptionPane.showMessageDialog(frame, e.getMessage());
 					}
 				}
 			}
 		});
 		panel.add(confirm, c);
-		
-		offset ++;
+
+		offset++;
 		JScrollPane scrollPane = new JScrollPane(console);
 		scrollPane.setPreferredSize(new Dimension(frame.getWidth() - 50, 150));
 		c.weightx = 0.0;
@@ -190,13 +203,13 @@ public class FinderInternalFrame extends JInternalFrame implements
 					throw new PropertyVetoException("Cancelled", null);
 				}
 				Container container = frame.getContentPane();
-				JDesktopPane desktop = (JDesktopPane)container;
-				JInternalFrame [] frames = desktop.getAllFrames();
-            	for (JInternalFrame mFrame : frames) {
-            		if (mFrame instanceof FinderInternalFrame) {
-            			desktop.remove(mFrame);
-            		}
-            	}
+				JDesktopPane desktop = (JDesktopPane) container;
+				JInternalFrame[] frames = desktop.getAllFrames();
+				for (JInternalFrame mFrame : frames) {
+					if (mFrame instanceof FinderInternalFrame) {
+						desktop.remove(mFrame);
+					}
+				}
 			}
 		}
 	}
@@ -229,35 +242,42 @@ public class FinderInternalFrame extends JInternalFrame implements
 		return null;
 	}
 
-	public List<String> check(File file, String key,
-			final String matchFile) throws Exception {
-		List<String> result = new ArrayList<String>();
-		if (!file.isDirectory()) {
-			BufferedReader reader = new BufferedReader(new FileReader(file));
-			String line = null;
-			int found = 0;
-			int n = 0;
-			StringBuffer buffer = new StringBuffer();
-			while ((line = reader.readLine()) != null) {
-				n++;
-				String mLine = line.toLowerCase();
-				if (isMatcher(mLine, key)) {// mLine.contains(key)
-					found++;
-					if (found == 1) {
-						buffer.append("[+][File found]\t|");
-						buffer.append(file.getAbsolutePath());
-						buffer.append("\n");
-					}
-					buffer.append("[-][Line:");
-					buffer.append(n);
-					buffer.append("]\t|");
-					buffer.append(line);
+	protected String checkFile(File file, String key, final String matchFile)
+			throws Exception {
+		BufferedReader reader = new BufferedReader(new FileReader(file));
+		String line = null;
+		int found = 0;
+		int n = 0;
+		StringBuffer buffer = new StringBuffer();
+		while ((line = reader.readLine()) != null) {
+			n++;
+			String mLine = line.toLowerCase();
+			if (isMatcher(mLine, key)) {// mLine.contains(key)
+				found++;
+				if (found == 1) {
+					buffer.append("[+][File found]\t|");
+					buffer.append(file.getAbsolutePath());
 					buffer.append("\n");
 				}
+				buffer.append("[-][Line:");
+				buffer.append(n);
+				buffer.append("]\t|");
+				buffer.append(line);
+				buffer.append("\n");
 			}
-			reader.close();
-			if (found > 0) {
-				result.add(buffer.toString());
+		}
+		reader.close();
+		return buffer.toString();
+	}
+
+	public List<String> check(File file, final String key,
+			final String matchFile) throws Exception {
+//		System.out.println("" + file.getAbsolutePath());
+		List<String> result = new ArrayList<String>();
+		if (!file.isDirectory()) {
+			String s = checkFile(file, key, matchFile);
+			if (StringUtils.isNotBlank(s)) {
+				result.add(s);
 				return result;
 			}
 			return Collections.emptyList();
@@ -272,8 +292,24 @@ public class FinderInternalFrame extends JInternalFrame implements
 					return isMatcher(name, matchFile);// name.endsWith(".sql");
 				}
 			});
-			for (File mFile : files) {
-				List<String> mResult = check(mFile, key, matchFile);
+			if (null == files || files.length == 0) {
+				return Collections.emptyList();
+			}
+			ExecutorService pool = Executors.newFixedThreadPool(4);
+			Set<Future<List<String>>> set = new HashSet<Future<List<String>>>();
+			for (int i = 0; i < files.length; i++) {
+				final File mFile = files[i];
+				Callable<List<String>> callable = new Callable<List<String>>() {
+					@Override
+					public List<String> call() throws Exception {
+						return check(mFile, key, matchFile);
+					}
+				};
+				Future<List<String>> future = pool.submit(callable);
+				set.add(future);
+			}
+			for (Future<List<String>> mFuture : set) {
+				List<String> mResult = mFuture.get();
 				if (null != mResult && !mResult.isEmpty()) {
 					result.addAll(mResult);
 				}
