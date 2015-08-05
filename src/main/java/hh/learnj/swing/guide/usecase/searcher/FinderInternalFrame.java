@@ -63,8 +63,6 @@ public class FinderInternalFrame extends JInternalFrame implements
 		init();
 		addVetoableChangeListener(this);
 		
-		pathField.setText("D:/环境发布/");
-		textField.setText("is_must");
 		typeField.setText(".\\.sql$");
 	}
 
