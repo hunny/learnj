@@ -5,7 +5,7 @@ public class ThreadAlter {
 	private boolean isSub = true;
 	
 	public synchronized void subThread(int n) {
-		if (!isSub) {
+		while (!isSub) {
 			try {
 				this.wait();
 			} catch (InterruptedException e) {
@@ -20,7 +20,7 @@ public class ThreadAlter {
 	}
 	
 	public synchronized void mainThread(int n) {
-		if (isSub) {
+		while (isSub) {
 			try {
 				this.wait();
 			} catch (InterruptedException e) {
