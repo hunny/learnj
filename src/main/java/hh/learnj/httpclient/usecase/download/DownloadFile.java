@@ -45,6 +45,21 @@ public class DownloadFile {
 			e.printStackTrace();
 		}
 	}
+	
+	public static void download(CloseableHttpClient httpclient, String src, String local, String localName) {
+		String[] srcs = src.split("/");
+		logger.info("download :" + src);
+		logger.info("file name:" + srcs[srcs.length - 1]);
+		try {
+			if (null == localName) {
+				localName = srcs[srcs.length - 1];
+			}
+			download(httpclient, src, local
+					+ localName);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	public static void download(CloseableHttpClient httpclient, String url,
 			String filePath) throws ClientProtocolException, IOException {
