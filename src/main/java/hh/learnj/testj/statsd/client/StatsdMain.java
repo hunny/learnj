@@ -10,13 +10,13 @@ public class StatsdMain {
 
 	public static void main(String[] args) throws Exception {
 		logger.info("Get started.");
-		StatsdClient client = new StatsdClient("127.0.0.1", 8125);
+		StatsdClient client = new StatsdClient("192.168.102.75", 8125);
 		run(client);
 		logger.info("Exe over.");
 	}
 	
 	public static void run(final StatsdClient client) {
-		for (int i = 0; i < 200 * 60; i++) {
+		for (int i = 0; i < 200 * 6000; i++) {
 //			client.increment("mtcounting", 3);
 			client.timing("mtesttiming", 1);
 			// To enable multi metrics (aka more than 1 metric in a UDP packet) (disabled by default)

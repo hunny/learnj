@@ -36,7 +36,7 @@ public class HttpRequestByAgent {
 		try {
 			httpclient = HttpAgentClient.httpAgentClient();
 			// 创建httpget.
-			HttpGet httpget = new HttpGet("http://cl.cnncl.net/htm_data/7/1510/1677893.html");
+			HttpGet httpget = new HttpGet("https://plus.google.com/");
 			// 执行get请求.
 			CloseableHttpResponse response = httpclient.execute(httpget);
 			try {
@@ -50,8 +50,8 @@ public class HttpRequestByAgent {
 					logger.info("============> Response content length: "
 							+ entity.getContentLength());
 					// 打印响应内容
-					//logger.info("============> Response content: "
-					//		+ EntityUtils.toString(entity));
+					logger.info("============> Response content: "
+							+ EntityUtils.toString(entity));
 					Document doc = Jsoup.parse(EntityUtils.toString(entity));
 					Elements elemets = doc.select("input[src]");
 					if (elemets.isEmpty()) {
