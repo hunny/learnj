@@ -25,7 +25,7 @@ public class HttpByAgent {
 		try {
 			httpclient = HttpAgentClient.httpAgentClient();
 			// 创建httpget.
-			HttpGet httpget = new HttpGet("http://cl.cnncl.net/htm_data/7/1510/1677893.html");
+			HttpGet httpget = new HttpGet("https://plus.google.com");
 			// 执行get请求.
 			CloseableHttpResponse response = httpclient.execute(httpget);
 			try {

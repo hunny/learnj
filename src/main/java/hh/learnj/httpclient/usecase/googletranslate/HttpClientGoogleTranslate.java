@@ -31,7 +31,7 @@ public class HttpClientGoogleTranslate {
 	// https://translate.google.com/translate_a/single?client=t&sl=auto&tl=zh-CN&hl=en&dt=bd&dt=ex&dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=ss&dt=t&dt=at&ie=UTF-8&oe=UTF-8&otf=2&rom=1&ssel=0&tsel=3&kc=1&tk=520257|854073&q=what%20the%20fuck%20are%20you%20talking%20about
 
 	public static void main(String[] args) {
-		new HttpClientGoogleTranslate().googleTranslate("what the fuck are you talking about");
+		new HttpClientGoogleTranslate().googleTranslate("what");
 	}
 
 	public String googleTranslate(String msg) {
