@@ -1,11 +1,11 @@
 package hh.learnj.testj.pin.code.tenda;
 
+import hh.learnj.testj.pin.code.WpsPin;
+
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-
-import hh.learnj.testj.pin.code.WpsPin;
 
 public class WpsPinTenda implements WpsPin {
 
@@ -115,6 +115,16 @@ public class WpsPinTenda implements WpsPin {
 	@Override
 	public void setSsid(String ssid) {
 		this.ssid = ssid;
+	}
+	
+	public static void main(String [] args) {
+		WpsPinTenda tenda = new WpsPinTenda();
+		String BSSID = "C8:3A:35:09:2B:00";
+		BSSID = "C8:3A:35:50:68:58";
+		tenda.setBssid(BSSID);
+		if (tenda.isTendaSpecial()) {
+			logger.debug("[+][-] Found Tenda [-]" + BSSID + "[-] match pin code [-]" + tenda.getPinCode() + "[-]");
+		}
 	}
 
 }
