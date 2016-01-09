@@ -28,7 +28,7 @@ public class HttpClientGoogleTranslate {
 	private static final Logger logger = Logger
 			.getLogger(HttpClientGoogleTranslate.class);
 
-	// https://translate.google.com/translate_a/single?client=t&sl=auto&tl=zh-CN&hl=en&dt=bd&dt=ex&dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=ss&dt=t&dt=at&ie=UTF-8&oe=UTF-8&otf=2&rom=1&ssel=0&tsel=3&kc=1&tk=520257|854073&q=what%20the%20fuck%20are%20you%20talking%20about
+	// https://translate.google.com/translate_a/single?client=t&sl=auto&tl=zh-CN&hl=en&dt=bd&dt=ex&dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=ss&dt=t&dt=at&ie=UTF-8&oe=UTF-8&otf=2&rom=1&ssel=0&tsel=3&kc=1&tk=837177.713208&q=what%20the%20fuck%20are%20you%20talking%20about
 
 	public static void main(String[] args) {
 		new HttpClientGoogleTranslate().googleTranslate("what");
@@ -103,9 +103,10 @@ public class HttpClientGoogleTranslate {
 	public URI urlBuilder(String msg) throws URISyntaxException {
 		URIBuilder builder = new URIBuilder(
 				"https://translate.google.com/translate_a/single?");
+		
 		builder.addParameter("client", "t");
-		builder.addParameter("sl", "auto");
-		builder.addParameter("tl", "zh-CN");
+		builder.addParameter("sl", "en");//source language
+		builder.addParameter("tl", "zh-CN");//translate language
 		builder.addParameter("hl", "en");
 		builder.addParameter("dt", "bd");
 		builder.addParameter("dt", "ex");
@@ -119,12 +120,13 @@ public class HttpClientGoogleTranslate {
 		builder.addParameter("dt", "at");
 		builder.addParameter("ie", "UTF-8");
 		builder.addParameter("oe", "UTF-8");
-		builder.addParameter("otf", "2");
+		builder.addParameter("otf", "1");
 		builder.addParameter("rom", "1");
-		builder.addParameter("ssel", "0");
-		builder.addParameter("tsel", "3");
-		builder.addParameter("kc", "1");
-		builder.addParameter("tk", "520257|854073");
+		builder.addParameter("ssel", "3");
+		builder.addParameter("tsel", "4");
+		builder.addParameter("kc", "4");
+		builder.addParameter("tco", "2");
+		builder.addParameter("tk", "837177.713208");
 		builder.addParameter("q", msg);
 		return builder.build();
 	}
