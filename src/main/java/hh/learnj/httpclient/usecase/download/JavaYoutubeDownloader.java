@@ -1,5 +1,7 @@
 package hh.learnj.httpclient.usecase.download;
 
+import hh.learnj.httpclient.usecase.googletranslate.HttpAgentClient;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -13,6 +15,7 @@ import java.io.Writer;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -22,6 +25,7 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -37,8 +41,6 @@ import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.log4j.Logger;
 import org.jsoup.helper.StringUtil;
-
-import hh.learnj.httpclient.usecase.googletranslate.HttpAgentClient;
 
 public class JavaYoutubeDownloader {
 
@@ -150,7 +152,7 @@ public class JavaYoutubeDownloader {
 								if (!decode.endsWith("&")) {
 									decode += "&";
 								}
-								decode += fixed;
+								decode += encode(fixed);
 								if (decodes.length >= 2) {
 									fixed = decodes[1];
 								}
@@ -163,7 +165,12 @@ public class JavaYoutubeDownloader {
 									decode = decode.split(prefix)[0];
 								}
 								if (decode.indexOf(",") > 0) {
-									decode = decode.split(",")[0];
+									String [] tmp = decode.split(",");
+									decode = tmp[0] + encode(tmp[1]);
+								}
+								if (decode.indexOf("itag=") > 0) {
+									String [] tmp = decode.split("itag");
+									decode = tmp[0] + encode("itag=" + tmp[1]);
 								}
 								map.put(Integer.parseInt(um.group(1)), decode);
 				            }
@@ -194,6 +201,23 @@ public class JavaYoutubeDownloader {
 				}
 			}
 		}
+	}
+	
+	private static String encode(String encode)  throws Exception {
+		if (StringUtils.isBlank(encode)) {
+			return encode;
+		}
+		String [] decodes = encode.split("&");
+		StringBuffer buffer = new StringBuffer();
+		for (String key: decodes) {
+			String [] keys = key.split("=");
+			if (keys.length >= 2) {
+				buffer.append("&");
+				buffer.append(keys[0]);
+				buffer.append(URLEncoder.encode(keys[1], "UTF-8"));
+			}
+		}
+		return buffer.toString();
 	}
 
 	private static Map<Integer, String> splitToMap(String value) throws Exception {
