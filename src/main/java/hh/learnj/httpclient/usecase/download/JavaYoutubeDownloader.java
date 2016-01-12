@@ -1,7 +1,5 @@
 package hh.learnj.httpclient.usecase.download;
 
-import hh.learnj.httpclient.usecase.googletranslate.HttpAgentClient;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -15,13 +13,12 @@ import java.io.Writer;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,7 +29,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.protocol.ClientContext;
+import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.client.utils.URIUtils;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.impl.client.BasicCookieStore;
@@ -40,7 +37,8 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.log4j.Logger;
-import org.jsoup.helper.StringUtil;
+
+import hh.learnj.httpclient.usecase.googletranslate.HttpAgentClient;
 
 public class JavaYoutubeDownloader {
 
@@ -52,6 +50,7 @@ public class JavaYoutubeDownloader {
 	private static final Pattern pipePattern = Pattern.compile("\\|");
 	private static final char[] ILLEGAL_FILENAME_CHARACTERS = { '/', '\n', '\r', '\t', '\0', '\f', '`', '?', '*', '\\',
 			'<', '>', '|', '\"', ':' };
+	private static final String ENCODER = "UTF-8";
 
 	private static void usage(String error) {
 		if (error != null) {
@@ -62,13 +61,17 @@ public class JavaYoutubeDownloader {
 	}
 
 	public static void main(String[] args) {
+//
+//		String test = "quality=medium&fallback_host=tc.v9.cache3.googlevideo.com&itag=43&type=video/webm; codecs=\"vp8.0\"";
+//		System.out.println(test.replaceAll("fallback_host=(.*)", ""));
 		// if (args == null || args.length == 0) {
 		// usage("Missing video id. Extract from
 		// http://www.youtube.com/watch?v=VIDEO_ID");
 		// }
 		try {
 			log.info("Starting");
-			String videoId = "wBDsVcYnJBc";//https://www.youtube.com/watch?v=wBDsVcYnJBc
+//			String videoId = "wBDsVcYnJBc";//https://www.youtube.com/watch?v=wBDsVcYnJBc
+			String videoId = "gyeGHirIhYc";//https://www.youtube.com/watch?v=gyeGHirIhYc
 			String outdir = "D:/BaiduYunDownload";
 			// TODO Ghetto command line parsing
 			// if (args.length == 1) {
@@ -78,12 +81,11 @@ public class JavaYoutubeDownloader {
 			// outdir = args[1];
 			// }
 			int format = 18; // http://en.wikipedia.org/wiki/YouTube#Quality_and_codecs
-			String encoding = "UTF-8";
 			String userAgent = "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.2.13) Gecko/20101203 Firefox/3.6.13";
 			File outputDir = new File(outdir);
 			String extension = getExtension(format);
 
-			play(videoId, format, encoding, userAgent, outputDir, extension);
+			play(videoId, format, ENCODER, userAgent, outputDir, extension);
 
 		} catch (Throwable t) {
 			t.printStackTrace();
@@ -105,7 +107,8 @@ public class JavaYoutubeDownloader {
 
 		CookieStore cookieStore = new BasicCookieStore();
 		HttpContext localContext = new BasicHttpContext();
-		localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
+//		localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
+		localContext.setAttribute(HttpClientContext.COOKIE_STORE, cookieStore);
 
 		HttpClient httpclient = HttpAgentClient.httpAgentClient();// new
 																	// DefaultHttpClient();
@@ -122,7 +125,7 @@ public class JavaYoutubeDownloader {
 			log.debug("[+][-][=][=]" + videoInfo);
 			if (videoInfo != null && videoInfo.length() > 0) {
 				List<NameValuePair> infoMap = new ArrayList<NameValuePair>();
-				URLEncodedUtils.parse(infoMap, new Scanner(videoInfo), encoding);
+				infoMap = URLEncodedUtils.parse(videoInfo, Charset.forName("UTF-8"));
 				String downloadUrl = null;
 				String filename = videoId;
 				for (NameValuePair pair : infoMap) {
@@ -134,48 +137,32 @@ public class JavaYoutubeDownloader {
 					} else if (key.equals("fmt_list")) {
 						log.info("[+]" + val);
 					} else if (key.equals("url_encoded_fmt_stream_map")) {
-						String [] itags = val.split("url=");
-						String fixed = null;
-						String prefix = null;
+						log.info("[+][=][=][=][=][=][=][=][=][=][=][=][=]");
+						String [] itags = val.split(",");
 						for (String s : itags) {
-							String decode = URLDecoder.decode(s, "UTF-8");
-							if (!StringUtil.isBlank(decode) && !decode.startsWith("http") && null == fixed) {
-								fixed = itags[0];
-								prefix = fixed.split("=")[0];
-								log.info("[+][=][FIXED]" + fixed);
-								log.info("[+][=][PREFIX]" + prefix);
+							int iKey = checkItag(s);
+							log.info("[+][=][SPOT]" + s);
+							String [] a = s.split("url=");
+							if (a.length <= 1) {
 								continue;
 							}
-							if (null != prefix) {
-								String [] decodes = decode.split(prefix);
-								decode = decodes[0];
-								if (!decode.endsWith("&")) {
-									decode += "&";
-								}
-								decode += encode(fixed);
-								if (decodes.length >= 2) {
-									fixed = decodes[1];
+							log.info("[+][=][URL]" + a[1]);
+							String decode = URLDecoder.decode(a[1], "UTF-8");
+							List<NameValuePair> tmpList = URLEncodedUtils.parse(decode, Charset.forName("UTF-8"));
+							for (NameValuePair p : tmpList) {
+								log.info("[+][=][" + p.getName() + "]=" + p.getValue());
+								if ("type".equals(p.getName()) 
+										|| "itag".equals(p.getName()) 
+										|| "codecs".equals(p.getName()) 
+										|| "; codecs".equals(p.getName())) {
+									decode = decode.replaceAll(p.getName() + "=" + p.getValue(), "");
 								}
 							}
-							Pattern u = Pattern.compile(".*itag=(\\d*)");
-				            Matcher um = u.matcher(decode.toString());
-				            if (um.find()) {
-								log.info("[+][-][KEY]" + um.group(1));
-								if (null != prefix) {
-									decode = decode.split(prefix)[0];
-								}
-								if (decode.indexOf(",") > 0) {
-									String [] tmp = decode.split(",");
-									decode = tmp[0] + encode(tmp[1]);
-								}
-								if (decode.indexOf("itag=") > 0) {
-									String [] tmp = decode.split("itag");
-									decode = tmp[0] + encode("itag=" + tmp[1]);
-								}
-								map.put(Integer.parseInt(um.group(1)), decode);
-				            }
-							log.info("[+][-]" + decode);
+							decode = decode + "&itag=" +  iKey;
+							decode = decode.replaceAll("&+", "&");
+							map.put(iKey, decode);
 						}
+						log.info("[+][=][=][=][=][=][=][=][=][=][=][=][=]");
 					}
 				}
 				if (map.isEmpty()) {
@@ -192,7 +179,6 @@ public class JavaYoutubeDownloader {
 				}
 				filename += "." + extension;
 				File outputfile = new File(outputdir, filename);
-
 				if (downloadUrl != null) {
 					log.info("[+][+][MAXKEY]" + maxKey);
 					log.info("[+][+][FILENAME]" + filename);
@@ -203,47 +189,20 @@ public class JavaYoutubeDownloader {
 		}
 	}
 	
-	private static String encode(String encode)  throws Exception {
-		if (StringUtils.isBlank(encode)) {
-			return encode;
+	private static int checkItag(String v) {
+		if (StringUtils.isBlank(v)) {
+			return -1;
 		}
-		String [] decodes = encode.split("&");
-		StringBuffer buffer = new StringBuffer();
-		for (String key: decodes) {
-			String [] keys = key.split("=");
-			if (keys.length >= 2) {
-				buffer.append("&");
-				buffer.append(keys[0]);
-				buffer.append(URLEncoder.encode(keys[1], "UTF-8"));
-			}
+		if (v.indexOf("itag=") <= -1) {
+			return -1;
 		}
-		return buffer.toString();
-	}
-
-	private static Map<Integer, String> splitToMap(String value) throws Exception {
-		if (null == value || value.length() == 0) {
-			return Collections.emptyMap();
-		}
-		int begin = value.indexOf("itag=");
-		Map<Integer, String> map = new HashMap<Integer, String>();
-		if (begin != -1) {
-			int end = value.indexOf("&", begin + 5);
-			if (end == -1) {
-				end = value.length();
-			}
-			String result = null;
-			int fmt = Integer.parseInt(value.substring(begin + 5, end));
-			begin = value.indexOf("url=");
-			if (begin != -1) {
-				end = value.indexOf("&", begin + 4);
-				if (end == -1) {
-					end = value.length();
-				}
-				result = URLDecoder.decode(value.substring(begin + 4, end), "UTF-8");
-			}
-			map.put(fmt, result);
-		}
-		return map;
+		Pattern u = Pattern.compile(".*itag=(\\d*)");
+        Matcher um = u.matcher(v);
+        if (um.find()) {
+			log.info("[+][-][KEY]" + um.group(1));
+			return Integer.parseInt(um.group(1));
+        }
+        return -1;
 	}
 
 	private static void downloadWithHttpClient(String userAgent, String downloadUrl, File outputfile) throws Throwable {
@@ -287,6 +246,7 @@ public class JavaYoutubeDownloader {
 
 	private static URI getUri(String path, List<NameValuePair> qparams) throws URISyntaxException {
 		URI uri = URIUtils.createURI(scheme, host, -1, "/" + path, URLEncodedUtils.format(qparams, "UTF-8"), null);
+//		URI uri = URIBuilder.createURI(scheme, host, -1, "/" + path, URLEncodedUtils.format(qparams, "UTF-8"), null);
 		return uri;
 	}
 
@@ -308,37 +268,3 @@ public class JavaYoutubeDownloader {
 		return result;
 	}
 }
-
-/**
- * <pre>
- * Exploded results from get_video_info:
- * 
- * fexp=90...
- * allow_embed=1
- * fmt_stream_map=35|http://v9.lscache8...
- * fmt_url_map=35|http://v9.lscache8...
- * allow_ratings=1
- * keywords=Stefan Molyneux,Luke Bessey,anarchy,stateless society,giant stone cow,the story of our unenslavement,market anarchy,voluntaryism,anarcho capitalism
- * track_embed=0
- * fmt_list=35/854x480/9/0/115,34/640x360/9/0/115,18/640x360/9/0/115,5/320x240/7/0/0
- * author=lukebessey
- * muted=0
- * length_seconds=390
- * plid=AA...
- * ftoken=null
- * status=ok
- * watermark=http://s.ytimg.com/yt/swf/logo-vfl_bP6ud.swf,http://s.ytimg.com/yt/swf/hdlogo-vfloR6wva.swf
- * timestamp=12...
- * has_cc=False
- * fmt_map=35/854x480/9/0/115,34/640x360/9/0/115,18/640x360/9/0/115,5/320x240/7/0/0
- * leanback_module=http://s.ytimg.com/yt/swfbin/leanback_module-vflJYyeZN.swf
- * hl=en_US
- * endscreen_module=http://s.ytimg.com/yt/swfbin/endscreen-vflk19iTq.swf
- * vq=auto
- * avg_rating=5.0
- * video_id=S6IZP3yRJ9I
- * token=vPpcFNh...
- * thumbnail_url=http://i4.ytimg.com/vi/S6IZP3yRJ9I/default.jpg
- * title=The Story of Our Unenslavement - Animated
- * </pre>
- */
