@@ -3,13 +3,13 @@ package hh.learnj.enhance;
 public class AutoBox {
 
 	public static void main(String[] args) {
-		
-		Integer tmp = 3; //auto enbox
-		tmp = tmp + 5;//auto debox;
+
+		Integer tmp = 3; // auto enbox
+		tmp = tmp + 5;// auto debox;
 		System.out.println(tmp);
-		
-		//编译器会缓存-128到127之间的数字对象，所以在这个范围之内的数字直接比较是相同的
-		//该设计模式为享元模式：flyweight，很多很小的对象，有很多相同的特征，则设计为一个类
+
+		// 编译器会缓存-128到127之间的数字对象，所以在这个范围之内的数字直接比较是相同的
+		// 该设计模式为享元模式：flyweight，很多很小的对象，有很多相同的特征，则设计为一个类
 		System.out.print("在-128至127之间:");
 		Integer tmp1 = 13;
 		Integer tmp2 = 13;
@@ -34,6 +34,23 @@ public class AutoBox {
 		System.out.println(tmp7 == tmp8);
 		System.out.print("在-128至127之外使用equals:");
 		System.out.println(tmp7.equals(tmp8));
+
+		Integer a = 1;
+		Integer b = 2;
+		Integer c = 3;
+		Integer d = 3;
+		Integer e = 321;
+		Integer f = 321;
+		Long g = 3L;
+		Long h = 2L;
+
+		System.out.println(c == d);
+		System.out.println(e == f);
+		System.out.println(c == (a + b));
+		System.out.println(c.equals(a + b));
+		System.out.println(g == (a + b));
+		System.out.println(g.equals(a + b));
+		System.out.println(g.equals(a + h));
 	}
 
 }
