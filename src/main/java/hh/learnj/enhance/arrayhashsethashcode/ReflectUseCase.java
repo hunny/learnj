@@ -1,6 +1,7 @@
 package hh.learnj.enhance.arrayhashsethashcode;
 
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Properties;
@@ -9,6 +10,13 @@ public class ReflectUseCase {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void main(String[] args) throws Exception {
+		
+		URL url = ReflectUseCase.class.getResource(".");
+		System.out.println(url.getPath());
+		
+		URL urlloader = ReflectUseCase.class.getClassLoader().getResource(".");
+		System.out.println(urlloader.getPath());
+		
 		InputStream stream = ReflectUseCase.class.getResourceAsStream("config.properties");
 		Properties prop = new Properties();
 		prop.load(stream);
