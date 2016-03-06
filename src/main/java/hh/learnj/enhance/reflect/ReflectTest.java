@@ -2,9 +2,11 @@ package hh.learnj.enhance.reflect;
 
 import hh.learnj.enhance.reflect.beans.ReflectPoint;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 public class ReflectTest {
 
@@ -47,7 +49,38 @@ public class ReflectTest {
 			}
 		}
 		System.out.println("Changed value:" + point.abc);
+		
+		int [] a1 = new int[] {1, 2, 3};
+		int [] a2 = new int[4];
+		int [][] a3 = new int[3][4];
+		String [] a4 = new String[] {"a", "b", "c"}; 
+		Integer [] a5 = new Integer[] {5, 6, 7};
+		System.out.println(a1.getClass() == a2.getClass());
+//		System.out.println(a1.getClass() == a4.getClass());
+//		System.out.println(a1.getClass() == a3.getClass());
+		System.out.println(a1.getClass().getSuperclass().getName());
+		System.out.println(a3.getClass().getSuperclass().getName());
+		System.out.println(a4.getClass().getSuperclass().getName());
+		System.out.println(Arrays.asList(a1));
+		System.out.println(Arrays.asList(a4));
+		System.out.println(Arrays.asList(a5));
+		
+		printObjects(a4);
+		printObjects("Hello World.");
 
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public static void printObjects(Object obj) {
+		Class clazz = obj.getClass();
+		if (clazz.isArray()) {
+			int len = Array.getLength(obj);
+			for (int i = 0; i < len; i++) {
+				System.out.println(Array.get(obj, i));
+			}
+		} else {
+			System.out.println(obj);
+		}
 	}
 	
 	public static void staticMethod() {
