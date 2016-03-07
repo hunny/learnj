@@ -11,5 +11,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})
 public @interface DefinedAnnotation {
-
+	String color() default "BLUE";
+	String value();
+	int [] arrAttr() default {3, 4, 5};
+	MetaAnnotation annotationAttr() default @MetaAnnotation("abc");
 }
