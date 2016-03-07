@@ -1,8 +1,11 @@
 package hh.learnj.httpclient.usecase.googletranslate;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
@@ -27,14 +30,34 @@ public class HttpClientGoogleTranslate {
 
 	private static final Logger logger = Logger
 			.getLogger(HttpClientGoogleTranslate.class);
+	
+	private String sl = "en";
+	private String tl = "zh-CN";
 
 	// https://translate.google.com/translate_a/single?client=t&sl=auto&tl=zh-CN&hl=en&dt=bd&dt=ex&dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=ss&dt=t&dt=at&ie=UTF-8&oe=UTF-8&otf=2&rom=1&ssel=0&tsel=3&kc=1&tk=837177.713208&q=what%20the%20fuck%20are%20you%20talking%20about
 
-	public static void main(String[] args) {
-		new HttpClientGoogleTranslate().googleTranslate("what");
+	public HttpClientGoogleTranslate(String sl, String tl) {
+		this.sl = sl;
+		this.tl = tl;
+	}
+	
+	//https://translate.google.com/translate_a/single?client=t&sl=zh-CN&tl=en&hl=en&dt=bd&dt=ex&dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=ss&dt=t&dt=at&ie=UTF-8&oe=UTF-8&otf=2&srcrom=1&ssel=4&tsel=0&kc=2&tco=2&tk=866774.725188&q=%5B1%20%E6%9C%8D%E9%A5%B0%E9%9E%8B%E5%B8%BD%5D
+	
+	public HttpClientGoogleTranslate() {
+	}
+	
+	public static void main(String[] args) throws Exception {
+		System.out.println(URLEncoder.encode("[1 服饰鞋帽]", "UTF-8"));
+		System.out.println(URLDecoder.decode("%5B1%20%E6%9C%8D%E9%A5%B0%E9%9E%8B%E5%B8%BD%5D", "UTF-8"));
+//		new HttpClientGoogleTranslate().googleTranslate("what");
+	}
+	
+	public String googleTranslate(String msg) {
+		return googleTranslate(msg, false);
 	}
 
-	public String googleTranslate(String msg) {
+	public String googleTranslate(String msg, boolean isUrl) {
+		String result = null;
 		CloseableHttpClient httpclient = null;
 		try {
 			SSLContext sslContext = SSLContexts.custom()
@@ -65,7 +88,12 @@ public class HttpClientGoogleTranslate {
 					}
 				}).build();
 			// 创建httpget.
-			HttpGet httpget = new HttpGet(urlBuilder(msg));
+			HttpGet httpget = null;
+			if (isUrl) {
+				httpget = new HttpGet(msg);
+			} else {
+				httpget = new HttpGet(urlBuilder(msg));
+			}
 			logger.info("============> executing request " + httpget.getURI());
 			// 执行get请求.
 			CloseableHttpResponse response = httpclient.execute(httpget);
@@ -79,9 +107,10 @@ public class HttpClientGoogleTranslate {
 					// 打印响应内容长度
 					logger.info("============> Response content length: "
 							+ entity.getContentLength());
+					result = EntityUtils.toString(entity);
 					// 打印响应内容
 					logger.info("============> Response content: "
-							+ EntityUtils.toString(entity));
+							+ result);
 				}
 				System.out.println("------------------------------------");
 			} finally {
@@ -97,16 +126,15 @@ public class HttpClientGoogleTranslate {
 				e.printStackTrace();
 			}
 		}
-		return null;
+		return result;
 	}
 
 	public URI urlBuilder(String msg) throws URISyntaxException {
 		URIBuilder builder = new URIBuilder(
 				"https://translate.google.com/translate_a/single?");
-		
 		builder.addParameter("client", "t");
-		builder.addParameter("sl", "en");//source language
-		builder.addParameter("tl", "zh-CN");//translate language
+		builder.addParameter("sl", this.sl);//source language
+		builder.addParameter("tl", this.tl);//translate language
 		builder.addParameter("hl", "en");
 		builder.addParameter("dt", "bd");
 		builder.addParameter("dt", "ex");
@@ -120,13 +148,13 @@ public class HttpClientGoogleTranslate {
 		builder.addParameter("dt", "at");
 		builder.addParameter("ie", "UTF-8");
 		builder.addParameter("oe", "UTF-8");
-		builder.addParameter("otf", "1");
-		builder.addParameter("rom", "1");
-		builder.addParameter("ssel", "3");
-		builder.addParameter("tsel", "4");
-		builder.addParameter("kc", "4");
+		builder.addParameter("otf", "2");
+		builder.addParameter("srcrom", "1");
+		builder.addParameter("ssel", "4");
+		builder.addParameter("tsel", "0");
+		builder.addParameter("kc", "2");
 		builder.addParameter("tco", "2");
-		builder.addParameter("tk", "837177.713208");
+		builder.addParameter("tk", "866774.725188");
 		builder.addParameter("q", msg);
 		return builder.build();
 	}
