@@ -11,7 +11,7 @@ public class ThreadObjectInstance {
 	
 	private static ThreadLocal<ThreadObjectInstance> map = new ThreadLocal<ThreadObjectInstance>();
 	
-	public static /* synchronized */ ThreadObjectInstance getThreadInstance() {
+	public static ThreadObjectInstance getThreadInstance() {/* synchronized */ 
 		ThreadObjectInstance instance = map.get();
 		if (null == instance) {
 			instance = new ThreadObjectInstance();

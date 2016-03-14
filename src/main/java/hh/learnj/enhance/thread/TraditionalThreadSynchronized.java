@@ -1,11 +1,43 @@
 package hh.learnj.enhance.thread;
 
+import java.lang.reflect.Method;
+
 public class TraditionalThreadSynchronized {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		TraditionalThreadSynchronized test = new TraditionalThreadSynchronized();
-//		test.threadOutputUnsafe();
-		test.threadOutputSafeFragment();
+		test.threadOutputUnsafe();
+//		test.threadOutputSafeFragment();
+//		test.threadUnsafeTest();
+	}
+	
+	public void threadUnsafeTest() throws Exception {
+		Outer outer = new Outer();
+		this.threadTest(outer, "unsafePrint", "Hello.World@163.com");
+		this.threadTest(outer, "unsafePrint", "Hunny.Hu@abc.com");
+	}
+	
+	protected void threadTest(final Outer outer, final String methodName, final String msg) throws Exception {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				while (true) {
+					try {
+						Thread.sleep(10);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					try {
+						Method method = Outer.class.getMethod(methodName, String.class);
+						method.invoke(outer, msg);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					//outer.safePrint("Hello.World@163.com");
+				}
+			}
+			
+		}).start();
 	}
 	
 	protected void threadOutputSafeFragment() {
