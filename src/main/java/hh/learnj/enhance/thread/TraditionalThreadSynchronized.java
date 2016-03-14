@@ -6,15 +6,16 @@ public class TraditionalThreadSynchronized {
 
 	public static void main(String[] args) throws Exception {
 		TraditionalThreadSynchronized test = new TraditionalThreadSynchronized();
-		test.threadOutputUnsafe();
+//		test.threadOutputUnsafe();
 //		test.threadOutputSafeFragment();
-//		test.threadUnsafeTest();
+//		test.threadInvokeTest("unsafePrint");
+		test.threadInvokeTest("safePrintMethod");
 	}
 	
-	public void threadUnsafeTest() throws Exception {
+	public void threadInvokeTest(String methodName) throws Exception {
 		Outer outer = new Outer();
-		this.threadTest(outer, "unsafePrint", "Hello.World@163.com");
-		this.threadTest(outer, "unsafePrint", "Hunny.Hu@abc.com");
+		this.threadTest(outer, methodName, "Hello.World@163.com");
+		this.threadTest(outer, methodName, "Hunny.Hu@abc.cn");
 	}
 	
 	protected void threadTest(final Outer outer, final String methodName, final String msg) throws Exception {
@@ -65,7 +66,7 @@ public class TraditionalThreadSynchronized {
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-					outer.safePrint("Hunny.Hu@abc.com");
+					outer.safePrint("Hunny.Hu@abc.cn");
 				}
 				
 			}
@@ -99,7 +100,7 @@ public class TraditionalThreadSynchronized {
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-					outer.unsafePrint("Hunny.Hu@abc.com");
+					outer.unsafePrint("Hunny.Hu@abc.cn");
 				}
 				
 			}
@@ -107,8 +108,12 @@ public class TraditionalThreadSynchronized {
 		}).start();
 	}
 	
-	class Outer {
+	static class Outer {
 		
+		/**
+		 * thread unsafe print
+		 * @param str
+		 */
 		public void unsafePrint(String str) {
 			int length = str.length();
 			for (int i = 0; i < length; i++) {
@@ -117,9 +122,51 @@ public class TraditionalThreadSynchronized {
 			System.out.println();
 		}
 		
+		/**
+		 * synchronized with code block
+		 * @param str
+		 */
 		public void safePrint(String str) {
 			int length = str.length();
 			synchronized(this) {
+				for (int i = 0; i < length; i++) {
+					System.out.print(str.charAt(i));;
+				}
+				System.out.println();
+			}
+		}
+		
+		/**
+		 * synchronized with method
+		 * @param str
+		 */
+		public synchronized void safePrintMethod(String str) {
+			int length = str.length();
+			for (int i = 0; i < length; i++) {
+				System.out.print(str.charAt(i));;
+			}
+			System.out.println();
+		}
+		
+		/**
+		 * static level synchronized thread safe.
+		 * @param str
+		 */
+		public static synchronized void safePrintMethodClassLevel(String str) {
+			int length = str.length();
+			for (int i = 0; i < length; i++) {
+				System.out.print(str.charAt(i));;
+			}
+			System.out.println();
+		}
+		
+		/**
+		 * equals static synchronized thread safe with code block.
+		 * @param str
+		 */
+		public void safePrintBlockEqualsStatic(String str) {
+			int length = str.length();
+			synchronized(Outer.class) {
 				for (int i = 0; i < length; i++) {
 					System.out.print(str.charAt(i));;
 				}
