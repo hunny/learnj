@@ -2,8 +2,6 @@ package hh.learnj.enhance.thread;
 
 import java.util.Random;
 
-import com.itextpdf.text.log.SysoCounter;
-
 public class ThreadScopeSharedDataClassTest {
 
 	public static void main(String[] args) {
