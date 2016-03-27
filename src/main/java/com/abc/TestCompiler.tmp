@@ -1,0 +1,20 @@
+package com.abc;
+import java.util.Enumeration;
+import java.util.Properties;
+
+public class TestCompiler {
+	
+	public static void getAllProperties() {
+		Properties props = System.getProperties();
+		Enumeration<Object> keys = props.keys();
+		while(keys.hasMoreElements()) {
+			String key = (String)keys.nextElement();
+			System.out.println(key + "[+]=[+]" + System.getProperty(key));
+		}
+	}
+	
+	public void helloWorld(String name) {
+		System.out.println("Hello World!" + name);
+	}
+
+}
