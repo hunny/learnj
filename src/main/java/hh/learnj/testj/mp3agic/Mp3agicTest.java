@@ -1,6 +1,7 @@
 package hh.learnj.testj.mp3agic;
 
 import java.io.File;
+import java.io.FilenameFilter;
 
 import com.mpatric.mp3agic.ID3v1;
 import com.mpatric.mp3agic.ID3v1Tag;
@@ -10,6 +11,7 @@ import com.mpatric.mp3agic.Mp3File;
 
 /**
  * Reference URL: https://github.com/mpatric/mp3agic
+ * 
  * @author hunnyhu
  *
  */
@@ -19,17 +21,20 @@ public class Mp3agicTest {
 
 		String mp3dir = "/Users/hunnyhu/Music/音乐/";
 		File file = new File(mp3dir);
-		File [] files = file.listFiles();
+		File[] files = file.listFiles(new FilenameFilter() {
+			@Override
+			public boolean accept(File dir, String name) {
+				return name.endsWith(".mp3");
+			}
+		});
 		for (File tmp : files) {
 			String name = tmp.getName();
-			if (name.endsWith(".mp3")) {
-				System.out.println(name);
-//				changeTags(mp3dir, name);
-			}
-					
+			System.out.println(name);
+			// changeTags(mp3dir, name);
+
 		}
 	}
-	
+
 	public static void changeTags(String mp3dir, String name) throws Exception {
 		Mp3File mp3file = new Mp3File(mp3dir + name);
 		System.out.println("Length of this mp3 is: "
@@ -111,7 +116,7 @@ public class Mp3agicTest {
 		id3v2Tag.setTitle("");
 		id3v2Tag.setAlbum("Oops");
 		id3v2Tag.setYear("");
-//		id3v2Tag.setGenre(12);
+		// id3v2Tag.setGenre(12);
 		id3v2Tag.setComment("Ok");
 		id3v2Tag.setComposer("Oops");
 		id3v2Tag.setPublisher("");

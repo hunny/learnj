@@ -249,6 +249,11 @@
 			<artifactId>mp3agic</artifactId>
 			<version>0.8.3</version>
 		</dependency>
+		<dependency>
+			<groupId>com.turn</groupId>
+			<artifactId>ttorrent-core</artifactId>
+			<version>1.5</version>
+		</dependency>
 		<!-- 单元测试使用包 -->
 		<dependency>
 			<groupId>junit</groupId>
