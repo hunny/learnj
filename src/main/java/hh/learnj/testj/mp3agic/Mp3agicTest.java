@@ -1,5 +1,7 @@
 package hh.learnj.testj.mp3agic;
 
+import java.io.File;
+
 import com.mpatric.mp3agic.ID3v1;
 import com.mpatric.mp3agic.ID3v1Tag;
 import com.mpatric.mp3agic.ID3v2;
@@ -16,7 +18,20 @@ public class Mp3agicTest {
 	public static void main(String[] args) throws Exception {
 
 		String mp3dir = "/Users/hunnyhu/Music/音乐/";
-		Mp3File mp3file = new Mp3File(mp3dir + "01.月光下的凤尾竹-葫芦丝.mp3");
+		File file = new File(mp3dir);
+		File [] files = file.listFiles();
+		for (File tmp : files) {
+			String name = tmp.getName();
+			if (name.endsWith(".mp3")) {
+				System.out.println(name);
+//				changeTags(mp3dir, name);
+			}
+					
+		}
+	}
+	
+	public static void changeTags(String mp3dir, String name) throws Exception {
+		Mp3File mp3file = new Mp3File(mp3dir + name);
 		System.out.println("Length of this mp3 is: "
 				+ mp3file.getLengthInSeconds() + " seconds");
 		System.out.println("Bitrate: " + mp3file.getBitrate() + " kbps "
@@ -91,23 +106,27 @@ public class Mp3agicTest {
 			id3v2Tag = new ID3v24Tag();
 			mp3file.setId3v2Tag(id3v2Tag);
 		}
-		id3v2Tag.setTrack("5");
-		id3v2Tag.setArtist("An Artist");
-		id3v2Tag.setTitle("The Title");
-		id3v2Tag.setAlbum("The Album");
-		id3v2Tag.setYear("2001");
-		id3v2Tag.setGenre(12);
-		id3v2Tag.setComment("Some comment");
-		id3v2Tag.setComposer("The Composer");
-		id3v2Tag.setPublisher("A Publisher");
-		id3v2Tag.setOriginalArtist("Another Artist");
-		id3v2Tag.setAlbumArtist("An Artist");
-		id3v2Tag.setCopyright("Copyright");
-		id3v2Tag.setUrl("http://foobar");
-		id3v2Tag.setEncoder("The Encoder");
-		id3v2Tag.setAlbumImage(null, null);
-		mp3file.save(mp3dir + "01.月光下的凤尾竹-葫芦丝-New.mp3");
-
+		id3v2Tag.setTrack("");
+		id3v2Tag.setArtist("Oops");
+		id3v2Tag.setTitle("");
+		id3v2Tag.setAlbum("Oops");
+		id3v2Tag.setYear("");
+//		id3v2Tag.setGenre(12);
+		id3v2Tag.setComment("Ok");
+		id3v2Tag.setComposer("Oops");
+		id3v2Tag.setPublisher("");
+		id3v2Tag.setOriginalArtist("");
+		id3v2Tag.setAlbumArtist("");
+		id3v2Tag.setCopyright("");
+		id3v2Tag.setUrl("");
+		id3v2Tag.setEncoder("");
+		id3v2Tag.clearAlbumImage();
+		String newName = name.replaceFirst("\\.mp3", "-new.mp3");
+		mp3file.save(mp3dir + newName);
+		File file = new File(mp3dir + name);
+		if (file.delete()) {
+			new File(mp3dir + newName).renameTo(new File(mp3dir + name));
+		}
 	}
 
 }
