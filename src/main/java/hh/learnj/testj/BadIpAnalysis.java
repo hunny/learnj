@@ -16,7 +16,7 @@ import org.junit.Test;
 
 public class BadIpAnalysis {
 
-	protected final String BASE_DIR = "D://work";
+	protected final String BASE_DIR = "D://work//";
 	protected final Pattern BAD_IP_PATTERN = Pattern.compile("bad IP:\\s+\\(\\'((\\d{1,3}\\.{0,1}){4})\\',\\s+443\\)");
 	protected final Pattern IP_PATTERN = Pattern.compile("(\\d{1,3}\\.{1}){3}\\d{1,3}");
 
@@ -87,15 +87,24 @@ public class BadIpAnalysis {
 		}
 		return result;
 	}
-
+	
 	protected Set<String> getIpListFromProp(String fileName) {
+		return getIpListFromProp(fileName, new String[] {"google_hk"});
+	}
+
+	protected Set<String> getIpListFromProp(String fileName, String... keys) {
 		Set<String> result = new HashSet<String>();
+		if (null == keys || keys.length == 0) {
+			return result;
+		}
 		Properties prop = new Properties();
 		InputStream inputStream = null;
 		try {
 			inputStream = new FileInputStream(new File(fileName));
 			prop.load(inputStream);
-			result.addAll(readIpsFromString(prop.getProperty("google_hk")));
+			for (String key : keys) {
+				result.addAll(readIpsFromString(prop.getProperty(key)));
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -152,10 +161,15 @@ public class BadIpAnalysis {
 	@Test
 	public void testClearBadIps() {
 		Set<String> myIps = getIpListFromProp(BASE_DIR + "proxy.ini");
+		myIps.addAll(getIpListFromProp(BASE_DIR + "proxy.user.ini", new String[] {
+				"google_cn",
+				"google_hk"
+		}));
 		Set<String> goodIps = readIpsFromFile(BASE_DIR + "goodips.log");
 		myIps.addAll(goodIps);
 		System.out.println("清洗前IP数：" + myIps.size());
 		Set<String> badIps = readBadIps(BASE_DIR + "20160719.log");
+		System.out.println("BadIP数：" + badIps.size());
 		for (String badIp : badIps) {
 			myIps.remove(badIp);
 		}
