@@ -1,17 +1,24 @@
 package hh.learnj.testj;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
 public class BadIpAnalysis {
@@ -147,34 +154,114 @@ public class BadIpAnalysis {
 		}
 		return buffer.toString().replaceFirst("\\|$", "");
 	}
+	
+	protected String backupFileToDirectory(String fileName, String dir) {
+		File srcFile = new File(fileName);
+		if (!srcFile.exists()) {
+			return null;
+		}
+		File dirFile = new File(dir);
+		if (!dirFile.exists()) {
+			dirFile.mkdirs();
+		}
+		String backup = "backup." + new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date()) + ".";
+		File destFile = new File(dirFile.getAbsolutePath() + File.separator + backup + srcFile.getName());
+		try {
+			FileUtils.copyFile(srcFile, destFile);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+		return destFile.getAbsolutePath();
+	}
+	
+	protected String checkReplacedLine(String line, Map<String, String> map, Map<String, Pattern> mapPattern) {
+		if (null == line) {
+			return line;
+		}
+		for (Map.Entry<String, String> m : map.entrySet()) {
+			Pattern p = mapPattern.get(m.getKey());
+			Matcher matcher = p.matcher(line);
+			if (matcher.find()) {
+				String nLine = matcher.group(1) + m.getValue();
+				System.out.println("[+][S]" + line);
+				System.out.println("[+][M]" + nLine);
+				return nLine;
+			}
+		}
+		return line;
+	}
+	
+	public boolean replaceFileLineInfo(Map<String, String> map, String srcFileName, String distFileName) {
+		BufferedReader bufferedReader = null;
+		BufferedWriter bufferedWriter = null;
+		Map<String, Pattern> mapPattern = new HashMap<String, Pattern>();
+		for (Map.Entry<String, String> m : map.entrySet()) {
+			mapPattern.put(m.getKey(), Pattern.compile("^(" + m.getKey() + "\\s?=\\s?)"));
+		}
+		try {
+			File srcFile = new File(srcFileName);
+			File distFile = new File(distFileName);
+			bufferedReader = new BufferedReader(new FileReader(srcFile));
+			bufferedWriter = new BufferedWriter(new FileWriter(distFile, false));
+			String line = null;
+			while ((line = bufferedReader.readLine()) != null) {
+				bufferedWriter.write(checkReplacedLine(line, map, mapPattern) + "\r\n");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (null != bufferedReader) {
+				try {
+					bufferedReader.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			if (null != bufferedWriter) {
+				try {
+					bufferedWriter.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return true;
+	}
 
 	@Test
 	public void testBadIps() {
-		showResult(readBadIps(BASE_DIR + "20160719.log"));
+		showResult(readBadIps(BASE_DIR + "badips.log"));
 	}
 
 	@Test
 	public void testReadIps() {
 		showResult(getIpListFromProp(BASE_DIR + "proxy.ini"));
 	}
-
+	
 	@Test
 	public void testClearBadIps() {
 		Set<String> myIps = getIpListFromProp(BASE_DIR + "proxy.ini");
-		myIps.addAll(getIpListFromProp(BASE_DIR + "proxy.user.ini", new String[] {
-				"google_cn",
-				"google_hk"
-		}));
 		Set<String> goodIps = readIpsFromFile(BASE_DIR + "goodips.log");
 		myIps.addAll(goodIps);
-		System.out.println("清洗前IP数：" + myIps.size());
-		Set<String> badIps = readBadIps(BASE_DIR + "20160719.log");
-		System.out.println("BadIP数：" + badIps.size());
+		System.out.println("Before clean IP count:" + myIps.size());
+		Set<String> badIps = readBadIps(BASE_DIR + "badips.log");
+		System.out.println("Bad IP count：" + badIps.size());
 		for (String badIp : badIps) {
 			myIps.remove(badIp);
 		}
-		System.out.println("清洗后IP数：" + myIps.size());
-		System.out.println(catIps(myIps));
+		System.out.println("After clean IP count：" + myIps.size());
+		String newIps = catIps(myIps);
+		System.out.println(newIps);
+		String backupFileName = backupFileToDirectory(BASE_DIR + "proxy.ini", BASE_DIR + File.separator + "backup");
+		if (null != backupFileName) {
+			System.out.println("backup success.");
+			Map<String, String> values = new HashMap<String, String>();
+			values.put("google_hk", newIps);
+			if (replaceFileLineInfo(values, backupFileName, BASE_DIR + "proxy.ini")) {
+				System.out.println("Remove Bad IPs success.");
+			}
+		}
 	}
 
 }
