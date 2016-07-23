@@ -228,7 +228,19 @@ public class BadIpAnalysis {
 		}
 		return true;
 	}
-
+	
+	protected boolean restartApplication() {
+		try {
+			Runtime.getRuntime().exec("taskkill /F /IM goagent.exe");
+			Runtime.getRuntime().exec(BASE_DIR + File.separator + "startup.bat");
+//			new ProcessBuilder("taskkill", "/F /IM goagent.exe").start();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+	
 	@Test
 	public void testBadIps() {
 		showResult(readBadIps(BASE_DIR + "badips.log"));
@@ -260,6 +272,9 @@ public class BadIpAnalysis {
 			values.put("google_hk", newIps);
 			if (replaceFileLineInfo(values, backupFileName, BASE_DIR + "proxy.ini")) {
 				System.out.println("Remove Bad IPs success.");
+				if (restartApplication()) {
+					System.out.println("Restart Application success!");
+				}
 			}
 		}
 	}
