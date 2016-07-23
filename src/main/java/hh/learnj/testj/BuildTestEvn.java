@@ -107,7 +107,7 @@ public class BuildTestEvn {
 				}
 				boolean matchTests = line.matches("\"tests\"\\s*:\\s*\\[\\{\\s*\"");
 				if (!matchTests) {
-					tmp = tmp.replaceFirst("}$", ",\"tests\":[{\"bootstrap\":true,\"path\":\"tests/specs/general.js\"}]}");
+					tmp = tmp.replaceFirst("}$", ",\"tests\":[{\"bootstrap\":true,\"path\":\"tests/specs/describes.js\"}]}");
 				}
 				return tmp + ENTER;
 			}
