@@ -23,7 +23,7 @@ import org.junit.Test;
 
 public class BadIpAnalysis {
 
-	protected final String BASE_DIR = "D://work//";
+	protected final String BASE_DIR = "D:/work/";
 	protected final Pattern BAD_IP_PATTERN = Pattern.compile("bad IP:\\s+\\(\\'((\\d{1,3}\\.{0,1}){4})\\',\\s+443\\)");
 	protected final Pattern IP_PATTERN = Pattern.compile("(\\d{1,3}\\.{1}){3}\\d{1,3}");
 

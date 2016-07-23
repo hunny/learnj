@@ -12,7 +12,7 @@ import org.junit.Test;
 public class BuildTestEvn {
 	
 	private final String BASE_DIR = "C:/work";
-	private final String ENTER_LINE = "\r\n";
+	private final String ENTER = "\r\n";
 	
 	protected boolean buildFile(String srcFileName, String destFileName, LineHandler lineHandler) {
 		File srcFile = new File(BASE_DIR + File.separator + srcFileName);
@@ -64,7 +64,7 @@ public class BuildTestEvn {
 			@Override
 			public String checkLine(String line) {
 				if (null == line) {
-					return ENTER_LINE;
+					return ENTER;
 				}
 				String tmp = line;
 				if (line.matches(".*Ext\\.manifest\\s*=\\s*Ext\\.manifest\\s*\\|\\|\\s*\"bootstrap\\.json\";.*")) {
@@ -72,9 +72,9 @@ public class BuildTestEvn {
 				} else if (line.matches(".*return\\s*this\\.css\\.concat\\(this\\.js\\);\\s*")) {
 					tmp = tmp.replaceFirst("return\\s*this\\.css\\.concat\\(this\\.js\\);", "var array = this.css.concat(this.js); if(this.tests) return array.concat(this.tests); return array;");
 				} else if (line.matches(".*this\\.js\\s*=\\s*this\\.processAssets\\(this\\.content\\.js,\\s*'js'\\);\\s*")) {
-					tmp = tmp + ENTER_LINE + "this.tests = this.processAssets(this.content.tests, 'js');";
+					tmp = tmp + ENTER + "this.tests = this.processAssets(this.content.tests, 'js');";
 				}
-				return tmp + ENTER_LINE;
+				return tmp + ENTER;
 			}
 		});
 	}
@@ -86,7 +86,7 @@ public class BuildTestEvn {
 			@Override
 			public String checkLine(String line) {
 				if (null == line) {
-					return ENTER_LINE;
+					return ENTER;
 				}
 				String tmp = line;
 				boolean matchAppJs = line.matches(".*\\{\"path\"\\s*:\\s*\"app\\.js\"\\}.*");
@@ -97,7 +97,7 @@ public class BuildTestEvn {
 				if (!matchTests) {
 					tmp = tmp.replaceFirst("}$", ",\"tests\":[{\"bootstrap\":true,\"path\":\"tests/specs/general.js\"}]}");
 				}
-				return tmp + ENTER_LINE;
+				return tmp + ENTER;
 			}
 		});
 	}

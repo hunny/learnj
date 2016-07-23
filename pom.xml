@@ -263,6 +263,17 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+	<repositories>
+		<repository>
+			<id>central</id>
+			<name>Maven Repository Switchboard</name>
+			<layout>default</layout>
+			<url>http://repo1.maven.org/maven2</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
 	<build>
 		<testResources>
 			<testResource>
@@ -339,16 +350,20 @@
 								<autocommit>true</autocommit>
 								<sqlCommand>
 									DROP DATABASE IF EXISTS test_db;
-									CREATE DATABASE IF NOT EXISTS test_db CHARACTER SET utf8 COLLATE
+									CREATE DATABASE IF
+									NOT EXISTS test_db CHARACTER SET utf8 COLLATE
 									utf8_general_ci;
 									USE test_db;
 									CREATE TABLE IF NOT EXISTS info (
-									id MEDIUMINT NOT NULL AUTO_INCREMENT,
+									id MEDIUMINT NOT
+									NULL AUTO_INCREMENT,
 									message VARCHAR(1024) DEFAULT NULL,
 									date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-									PRIMARY KEY (id)
+									PRIMARY KEY
+									(id)
 									) ENGINE=InnoDB DEFAULT CHARSET=UTF8;
-									INSERT INTO info (message) VALUES ('ok');
+									INSERT INTO info
+									(message) VALUES ('ok');
 								</sqlCommand>
 								<srcFiles>
 									<srcFile>../src/doc/design/schema.sql</srcFile>
