@@ -7,12 +7,24 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class BuildTestEvn {
 	
-	private final String BASE_DIR = "C:/work";
 	private final String ENTER = "\r\n";
+	private static String BASE_DIR = "C:/work/";
+	
+	@BeforeClass
+	public static void beforeTest() {
+		/**
+		 * Need to set Run Configurations of VM arguments, eg: -DbaseDir=C:/work/ext
+		 */
+		String baseDir = System.getProperty("baseDir");
+		if (null != baseDir) {
+			BASE_DIR = baseDir;
+		}
+	}
 	
 	protected boolean buildFile(String srcFileName, String destFileName, LineHandler lineHandler) {
 		File srcFile = new File(BASE_DIR + File.separator + srcFileName);
