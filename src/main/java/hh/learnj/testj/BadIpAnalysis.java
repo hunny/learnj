@@ -19,6 +19,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
 import org.junit.Test;
 
 public class BadIpAnalysis {
@@ -26,6 +27,7 @@ public class BadIpAnalysis {
 	protected final String BASE_DIR = "D:/work/";
 	protected final Pattern BAD_IP_PATTERN = Pattern.compile("bad IP:\\s+\\(\\'((\\d{1,3}\\.{0,1}){4})\\',\\s+443\\)");
 	protected final Pattern IP_PATTERN = Pattern.compile("(\\d{1,3}\\.{1}){3}\\d{1,3}");
+	protected final Logger logger = Logger.getLogger(this.getClass());
 
 	protected Set<String> readBadIps(String fileName) {
 		Set<String> result = new HashSet<String>();
@@ -142,7 +144,7 @@ public class BadIpAnalysis {
 			return;
 		}
 		for (String str : result) {
-			System.out.println("[+]" + str);
+			logger.info(str);
 		}
 	}
 
@@ -184,8 +186,8 @@ public class BadIpAnalysis {
 			Matcher matcher = p.matcher(line);
 			if (matcher.find()) {
 				String nLine = matcher.group(1) + m.getValue();
-				System.out.println("[+][S]" + line);
-				System.out.println("[+][M]" + nLine);
+				logger.info("[S]" + line);
+				logger.info("[M]" + nLine);
 				return nLine;
 			}
 		}
@@ -230,14 +232,14 @@ public class BadIpAnalysis {
 	}
 	
 	protected boolean restartApplication() {
-		try {
-			Runtime.getRuntime().exec("taskkill /F /IM goagent.exe");
-			Runtime.getRuntime().exec(BASE_DIR + File.separator + "startup.bat");
-//			new ProcessBuilder("taskkill", "/F /IM goagent.exe").start();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
+//		try {
+//			Runtime.getRuntime().exec("taskkill /F /IM goagent.exe");
+//			Runtime.getRuntime().exec(BASE_DIR + File.separator + "startup.bat");
+////			new ProcessBuilder("taskkill", "/F /IM goagent.exe").start();
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			return false;
+//		}
 		return true;
 	}
 	
@@ -256,24 +258,24 @@ public class BadIpAnalysis {
 		Set<String> myIps = getIpListFromProp(BASE_DIR + "proxy.ini");
 		Set<String> goodIps = readIpsFromFile(BASE_DIR + "goodips.log");
 		myIps.addAll(goodIps);
-		System.out.println("Before clean IP count:" + myIps.size());
+		logger.info("Before clean IP count:" + myIps.size());
 		Set<String> badIps = readBadIps(BASE_DIR + "badips.log");
-		System.out.println("Bad IP count：" + badIps.size());
+		logger.info("Bad IP count：" + badIps.size());
 		for (String badIp : badIps) {
 			myIps.remove(badIp);
 		}
-		System.out.println("After clean IP count：" + myIps.size());
+		logger.info("After clean IP count：" + myIps.size());
 		String newIps = catIps(myIps);
-		System.out.println(newIps);
+		logger.info("[N]newIps = " + newIps);
 		String backupFileName = backupFileToDirectory(BASE_DIR + "proxy.ini", BASE_DIR + File.separator + "backup");
 		if (null != backupFileName) {
-			System.out.println("backup success.");
+			logger.info("backup success.");
 			Map<String, String> values = new HashMap<String, String>();
 			values.put("google_hk", newIps);
 			if (replaceFileLineInfo(values, backupFileName, BASE_DIR + "proxy.ini")) {
-				System.out.println("Remove Bad IPs success.");
+				logger.info("Remove Bad IPs success.");
 				if (restartApplication()) {
-					System.out.println("Restart Application success!");
+					logger.info("Restart Application success!");
 				}
 			}
 		}
