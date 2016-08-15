@@ -263,28 +263,116 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+	<repositories>
+		<repository>
+			<id>central</id>
+			<name>Maven Repository Switchboard</name>
+			<layout>default</layout>
+			<url>http://repo1.maven.org/maven2</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
 	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<!-- 2.8.0-01 and later require maven-compiler-plugin 3.1 or higher -->
-				<version>3.3</version>
-				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>com.atlassian.maven.plugins</groupId>
-				<artifactId>maven-clover2-plugin</artifactId>
-				<version>4.0.4</version>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-eclipse-plugin</artifactId>
-				<version>2.9</version>
-			</plugin>
-		</plugins>
+		<testResources>
+			<testResource>
+				<directory>src/test/resources</directory>
+			</testResource>
+			<testResource>
+				<directory>src/test/java</directory>
+				<includes>
+					<include>**/*.properties</include>
+					<include>**/*.xml</include>
+					<include>**/*.json</include>
+					<include>**/*.xls</include>
+				</includes>
+			</testResource>
+		</testResources>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<!-- 2.8.0-01 and later require maven-compiler-plugin 3.1 or higher -->
+					<version>3.3</version>
+					<configuration>
+						<source>1.6</source>
+						<target>1.6</target>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>com.atlassian.maven.plugins</groupId>
+					<artifactId>maven-clover2-plugin</artifactId>
+					<version>4.0.4</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-eclipse-plugin</artifactId>
+					<version>2.9</version>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>sql-maven-plugin</artifactId>
+					<dependencies>
+						<dependency>
+							<groupId>mysql</groupId>
+							<artifactId>mysql-connector-java</artifactId>
+							<version>${mysql.version}</version>
+						</dependency>
+					</dependencies>
+					<configuration>
+						<driver>com.mysql.jdbc.Driver</driver>
+						<url>jdbc:mysql://localhost:3306/dpos?useUnicode=yes&amp;characterEncoding=utf-8&amp;useSSL=no</url>
+						<username>dpos</username>
+						<password>dpos</password>
+					</configuration>
+					<executions>
+						<execution>
+							<id>create database</id>
+							<phase>process-test-resources</phase>
+							<goals>
+								<goal>execute</goal>
+							</goals>
+							<configuration>
+								<autocommit>true</autocommit>
+								<sqlCommand>CREATE DATABASE IF NOT EXISTS test_db CHARACTER SET
+									utf8 COLLATE utf8_general_ci;</sqlCommand>
+							</configuration>
+						</execution>
+						<execution>
+							<id>pre handle integration env database</id>
+							<phase>pre-integration-test</phase>
+							<goals>
+								<goal>execute</goal>
+							</goals>
+							<configuration>
+								<autocommit>true</autocommit>
+								<sqlCommand>
+									DROP DATABASE IF EXISTS test_db;
+									CREATE DATABASE IF
+									NOT EXISTS test_db CHARACTER SET utf8 COLLATE
+									utf8_general_ci;
+									USE test_db;
+									CREATE TABLE IF NOT EXISTS info (
+									id MEDIUMINT NOT
+									NULL AUTO_INCREMENT,
+									message VARCHAR(1024) DEFAULT NULL,
+									date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+									PRIMARY KEY
+									(id)
+									) ENGINE=InnoDB DEFAULT CHARSET=UTF8;
+									INSERT INTO info
+									(message) VALUES ('ok');
+								</sqlCommand>
+								<srcFiles>
+									<srcFile>../src/doc/design/schema.sql</srcFile>
+								</srcFiles>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
 </project>
