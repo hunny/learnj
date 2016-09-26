@@ -1,6 +1,5 @@
 package hh.learnj.database.jdbc.spring;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
