@@ -8,8 +8,13 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,12 +31,28 @@ public class FindIps {
 	
 	public static final Pattern IP_PATTERN = Pattern.compile("(\\d{1,3}\\.{1}){3}\\d{1,3}");
 	public static final Logger logger = LoggerFactory.getLogger(FindIps.class);
+	public static final Integer THREAD_COUNT = 10;
+	
+	private static ExecutorService executorService = Executors.newFixedThreadPool(THREAD_COUNT, new ThreadFactory() {
+		public Thread newThread(Runnable r) {
+			return new Thread(r, "LaborThreadFactory");
+		}
+	});
 	
 	public static void main(String[] args) {
 		final String BASE_DIR = "D:/";
 		Set<String> goodIps = readIpsFromFile(BASE_DIR + "goodips.log");
-		for (String ip : goodIps) {
-			findIp(ip);
+		final Queue<String> queue = new ConcurrentLinkedQueue<String>();
+		queue.addAll(goodIps);
+		for (int i = 0; i < THREAD_COUNT; i++) {
+			executorService.submit(new Runnable() {
+				public void run() {
+					String ip = queue.poll();
+					while (null != ip) {
+						findIp(ip);
+					}
+				}
+			});
 		}
 	}
 
@@ -39,12 +60,13 @@ public class FindIps {
 		HttpGet httpReq = new HttpGet("https://" + ip + "/?" + UUID.randomUUID().toString());
 		HttpResponse response = null;
 		try {
+			logger.info("Ready to get:{}", ip);
 			response = HttpConnect.execute(httpReq);
 			if (response.getStatusLine().getStatusCode() == 200) {
 				String serverName = response.getLastHeader("Server").getValue();
+				logger.info("serverName:{}", serverName);
 				if (serverName.equals("gws")) {
 					System.out.print(ip + "|");
-					
 				}
 			}
 		} catch (IOException e) {

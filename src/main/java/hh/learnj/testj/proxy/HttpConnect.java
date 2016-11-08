@@ -27,9 +27,9 @@ public class HttpConnect {
 			.build());
 
 	private static RequestConfig rc = RequestConfig.custom() //
-			.setConnectTimeout(2000) //
+			.setConnectTimeout(5000) //
 			.setCookieSpec("ignoreCookies") //
-			.setSocketTimeout(1000) //
+			.setSocketTimeout(5000) //
 			.build(); //
 
 	private static CloseableHttpClient httpClient = HttpClients.custom().setConnectionManager(cm)
