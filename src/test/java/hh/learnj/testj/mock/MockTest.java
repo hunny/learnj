@@ -35,7 +35,8 @@ import org.mockito.stubbing.Answer;
  * <a href="https://gojko.net/2009/10/23/mockito-in-six-easy-examples/">Mockito in six easy examples</a>
  * <p>
  * <a href="http://bijian1013.iteye.com/blog/1987361">Mockito(一) --入门篇</a>
- * 
+ * <p>
+ * <a href="http://www.vogella.com/tutorials/Mockito/article.html">Mockito(一) --入门篇</a>
  * <p>
  * 9. 或者使用built-in runner：MockitoJUnitRunner
  * <p>
