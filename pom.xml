@@ -289,6 +289,24 @@
           <artifactId>xlsx-streamer</artifactId>
           <version>1.0.0</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.verhas/license3j -->
+        <dependency>
+            <groupId>com.verhas</groupId>
+            <artifactId>license3j</artifactId>
+            <version>1.0.7</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk15on -->
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk15on</artifactId>
+            <version>1.56</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.fusesource/sigar -->
+        <dependency>
+            <groupId>org.fusesource</groupId>
+            <artifactId>sigar</artifactId>
+            <version>1.6.4</version>
+        </dependency>
 	</dependencies>
 	<repositories>
 		<repository>
@@ -316,6 +334,15 @@
 				</includes>
 			</testResource>
 		</testResources>
+        <resources>
+          <resource>
+            <directory>src/main/resources/libs</directory>
+            <includes>
+              <include>sigar-amd64-winnt.dll</include>
+              <include>sigar-x86-winnt.dll</include>
+            </includes>
+          </resource>
+        </resources>
 		<pluginManagement>
 			<plugins>
 				<plugin>
