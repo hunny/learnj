@@ -141,6 +141,23 @@ public class RSATest {
 	}
 
 	/**
+	 * 私钥签名
+	 * 
+	 * @param target
+	 * @return
+	 * @throws Exception
+	 */
+	static String signByPrivateKey(String target) throws Exception {
+		PrivateKey privateKey = getPrivateKey();
+		Signature signature = Signature.getInstance(ALGORITHM_SIGN);
+		signature.initSign(privateKey);
+		signature.update(target.getBytes("UTF-8"));
+		String sign = encodeBase64(signature.sign());
+		System.out.println("生成的签名：\r\n" + sign);
+		return sign;
+	}
+
+	/**
 	 * 私钥加密
 	 * 
 	 * @param data
@@ -172,23 +189,6 @@ public class RSATest {
 		System.out.println("私钥解密后的数据：\r\n" + source);
 	}
 
-	/**
-	 * 私钥签名
-	 * 
-	 * @param target
-	 * @return
-	 * @throws Exception
-	 */
-	static String signByPrivateKey(String target) throws Exception {
-		PrivateKey privateKey = getPrivateKey();
-		Signature signature = Signature.getInstance(ALGORITHM_SIGN);
-		signature.initSign(privateKey);
-		signature.update(target.getBytes("UTF-8"));
-		String sign = encodeBase64(signature.sign());
-		System.out.println("生成的签名：\r\n" + sign);
-		return sign;
-	}
-	
 	/**
 	 * base64编码
 	 * 
