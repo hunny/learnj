@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:aop="http://www.springframework.org/schema/aop" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans 
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://www.springframework.org/schema/aop 
+           http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
+
+  <bean id="userService" class="hh.learnj.testj.annotation.privilege.UserServiceImpl"></bean>
+  <bean id="privilegeAspect" class="hh.learnj.testj.annotation.privilege.PrivilegeAspect"></bean>
+
+  <!-- 配置切面 -->
+  <aop:config>
+  
+    <!-- 切入点表达式，确认目标类 privilege.service.impl包中的所有类中的所有方法 -->
+    <aop:pointcut id="perform"
+      expression="execution(* hh.learnj.testj.annotation.privilege.*.*(..))" />
+
+    <!-- ref指向的对象就是切面 -->
+    <aop:aspect ref="privilegeAspect">
+
+      <!-- 环绕通知 -->
+      <aop:around method="isAccessMethod" pointcut-ref="perform" />
+
+    </aop:aspect>
+  </aop:config>
+
+</beans>
