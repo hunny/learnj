@@ -23,12 +23,14 @@ public class OSHIHardware implements Hardware {
 	
 	@Override
 	public String getSerialNumber() {
-		return hareware.getComputerSystem().getSerialNumber();
+		return null;
+//		return hareware.getComputerSystem().getSerialNumber();
 	}
 
 	@Override
 	public String getBaseboardSerialNumber() {
-		return hareware.getComputerSystem().getBaseboard().getSerialNumber();
+		return null;
+//		return hareware.getComputerSystem().getBaseboard().getSerialNumber();
 	}
 
 	@Override
