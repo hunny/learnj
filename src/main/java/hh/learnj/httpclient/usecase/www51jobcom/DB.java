@@ -80,7 +80,7 @@ public class DB {
 
 		String getTableName();
 
-		void handle(List<Map<String, String>> values, Statement stmt);
+		void handle(List<Map<String, String>> values, Statement stmt) throws SQLException;
 	}
 
 	public static void insert(String table, Map<String, String> insert, Statement stmt) {
