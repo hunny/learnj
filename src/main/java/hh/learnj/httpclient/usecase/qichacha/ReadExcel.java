@@ -21,13 +21,14 @@ public class ReadExcel {
 	 * @throws Exception
 	 */
 	public static void main(String[] args) throws Exception {
-		updateSign();
+		System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "INFO");
+		DB.handle(new QueryHander());
 	}
 
 	/**
 	 * 
 	 */
-	private static void updateSign() {
+	public static void updateSign() {
 		final List<Map<String, String>> values = new ArrayList<Map<String, String>>();
 		ExcelReader.read("d:/300万美金以下客户.xlsx", new ExcelReader.Handler() {
 			@Override
