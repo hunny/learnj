@@ -81,11 +81,12 @@ public class BuildTestEvn {
 				String tmp = line;
 				if (line.matches(".*Ext\\.manifest\\s*=\\s*Ext\\.manifest\\s*\\|\\|\\s*\"bootstrap\\.json\";.*")) {
 					tmp = tmp.replaceFirst("bootstrap\\.json", "bootstrap-test.json");
-				} else if (line.matches(".*return\\s*this\\.css\\.concat\\(this\\.js\\);\\s*")) {
-					tmp = tmp.replaceFirst("return\\s*this\\.css\\.concat\\(this\\.js\\);", "var array = this.css.concat(this.js); if(this.tests) return array.concat(this.tests); return array;");
-				} else if (line.matches(".*this\\.js\\s*=\\s*this\\.processAssets\\(this\\.content\\.js,\\s*'js'\\);\\s*")) {
-					tmp = tmp + ENTER + "this.tests = this.processAssets(this.content.tests, 'js');";
 				}
+//				else if (line.matches(".*return\\s*this\\.css\\.concat\\(this\\.js\\);\\s*")) {
+//					tmp = tmp.replaceFirst("return\\s*this\\.css\\.concat\\(this\\.js\\);", "var array = this.css.concat(this.js); if(this.tests) return array.concat(this.tests); return array;");
+//				} else if (line.matches(".*this\\.js\\s*=\\s*this\\.processAssets\\(this\\.content\\.js,\\s*'js'\\);\\s*")) {
+//					tmp = tmp + ENTER + "this.tests = this.processAssets(this.content.tests, 'js');";
+//				}
 				return tmp + ENTER;
 			}
 		});
@@ -105,10 +106,10 @@ public class BuildTestEvn {
 				if (matchAppJs) {
 					tmp = tmp.replaceFirst("\\{\"path\"\\s*:\\s*\"app\\.js\"\\}", "{\"path\":\"app-test.js\"}");
 				}
-				boolean matchTests = line.matches("\"tests\"\\s*:\\s*\\[\\{\\s*\"");
-				if (!matchTests) {
-					tmp = tmp.replaceFirst("}$", ",\"tests\":[{\"bootstrap\":true,\"path\":\"tests/specs/describes.js\"}]}");
-				}
+//				boolean matchTests = line.matches("\"tests\"\\s*:\\s*\\[\\{\\s*\"");
+//				if (!matchTests) {
+//					tmp = tmp.replaceFirst("}$", ",\"tests\":[{\"bootstrap\":true,\"path\":\"tests/specs/describes.js\"}]}");
+//				}
 				return tmp + ENTER;
 			}
 		});

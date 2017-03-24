@@ -19,15 +19,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BadIpAnalysis {
 
-	protected final String BASE_DIR = "D:/work/";
+	protected final String BASE_DIR = "D:/work/software/goagent-goagent-v3.2.3/local/";
 	protected final Pattern BAD_IP_PATTERN = Pattern.compile("bad IP:\\s+\\(\\'((\\d{1,3}\\.{0,1}){4})\\',\\s+443\\)");
 	protected final Pattern IP_PATTERN = Pattern.compile("(\\d{1,3}\\.{1}){3}\\d{1,3}");
-	protected final Logger logger = Logger.getLogger(this.getClass());
+	protected final Logger logger = LoggerFactory.getLogger(BadIpAnalysis.class);
 
 	protected Set<String> readBadIps(String fileName) {
 		Set<String> result = new HashSet<String>();
@@ -243,12 +244,12 @@ public class BadIpAnalysis {
 		return true;
 	}
 	
-	@Test
+//	@Test
 	public void testBadIps() {
 		showResult(readBadIps(BASE_DIR + "badips.log"));
 	}
 
-	@Test
+//	@Test
 	public void testReadIps() {
 		showResult(getIpListFromProp(BASE_DIR + "proxy.ini"));
 	}

@@ -8,7 +8,10 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
@@ -42,6 +45,17 @@ public class App {
 		System.out.println();
 		test("abccdefcfk");
 		test("qwertyuiopasdfgfdsfdsfsdfhjklzxcvbnmERTYDFGHJASDFGHJKLzxcvbnmwertdfghcvbnRfgfdgdfgTYFGH");
+		Set<String> values = new LinkedHashSet<String>();
+		values.add("5");
+		values.add("7");
+		values.add("1");
+		values.add("3");
+		values.add("9");
+		values.add("5");
+		for (String s : values) {
+			System.out.println(s);
+		}
+		System.out.println(values.toArray(new String[values.size()]));
 	}
 
 	public static void command(String command1, String command2) throws IOException {

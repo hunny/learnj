@@ -21,7 +21,6 @@ public class QiChaCha {
 	 * @throws Exception
 	 */
 	public static void main(String[] args) throws Exception {
-		System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "INFO");
 		DB.handle(new QueryHander());
 	}
 

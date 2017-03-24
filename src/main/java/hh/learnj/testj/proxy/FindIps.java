@@ -40,7 +40,7 @@ public class FindIps {
 	});
 	
 	public static void main(String[] args) {
-		final String BASE_DIR = "D:/";
+		final String BASE_DIR = "D:/work/software/goagent-goagent-v3.2.3/local/";
 		Set<String> goodIps = readIpsFromFile(BASE_DIR + "goodips.log");
 		final Queue<String> queue = new ConcurrentLinkedQueue<String>();
 		queue.addAll(goodIps);

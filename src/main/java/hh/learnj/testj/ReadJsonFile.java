@@ -40,7 +40,7 @@ public class ReadJsonFile {
 	
 	@Test
 	public void testLoadJson() {
-		String result = readFromFile("C:/work/src/main/ext/bootstrap-test.json");
+		String result = readFromFile("C:/work/dpos/trunk/dpos-web/src/main/ext/bootstrap-test.json");
 		JSONObject json = new JSONObject(result);
 		JSONObject paths = (JSONObject)json.get("paths");
 		for (String key : paths.keySet()) {
