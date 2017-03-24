@@ -14,7 +14,7 @@ import org.apache.commons.lang3.StringUtils;
  * @author huzexiong
  *
  */
-public class ReadExcel {
+public class QiChaCha {
 
 	/**
 	 * @param args

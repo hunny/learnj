@@ -3,9 +3,7 @@
  */
 package hh.learnj.httpclient.usecase.qichacha;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.text.ParseException;
@@ -28,7 +26,7 @@ import org.apache.http.util.EntityUtils;
  * @author huzexiong
  *
  */
-public class QiChacha {
+public class QiChachaHttp {
 
 	private static final String USER_AGENT = "Mozilla/5.0";
 	private static final String HOST = "www.qichacha.com";
@@ -70,7 +68,7 @@ public class QiChacha {
 
 		String url = "http://localhost:8080/dfm-web/s/app/888888/auth/version";
 
-		QiChacha http = new QiChacha();
+		QiChachaHttp http = new QiChachaHttp();
 
 		String result = http.get(url, "UTF-8", null);
 		System.out.println(result);
@@ -91,6 +89,11 @@ public class QiChacha {
 		// set cookies
 		setCookies(response.getFirstHeader("Set-Cookie") == null ? "" : response.getFirstHeader("Set-Cookie").toString());
 		String html = EntityUtils.toString(response.getEntity(), charset);
+		try {
+			new IllegalParser().parse(html);
+		} catch (UnsupportedOperationException e) {
+			throw new RuntimeException(e);
+		}
 		if (null != parser) {
 			parser.parse(html);
 		}
@@ -123,6 +126,11 @@ public class QiChacha {
 		System.out.println("Response Code : " + responseCode);
 
 		String html = EntityUtils.toString(response.getEntity(), charset);
+		try {
+			new IllegalParser().parse(html);
+		} catch (UnsupportedOperationException e) {
+			throw new RuntimeException(e);
+		}
 		if (null != parser) {
 			parser.parse(html);
 		}

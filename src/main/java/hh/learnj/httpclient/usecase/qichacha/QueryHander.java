@@ -11,6 +11,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.ClientProtocolException;
@@ -36,7 +38,7 @@ public class QueryHander implements Hander {
 	public void handle(Statement stmt) throws SQLException {
 		int offset = 0;
 		int limit = 10;
-		final QiChacha http = new QiChacha();
+		final QiChachaHttp http = new QiChachaHttp();
 //		ExecutorService userExecutorService = Executors.newFixedThreadPool(10);
 		do {
 			String sql = String.format("select id, name from %s order by id asc limit %d, %d", getTableName(), limit * offset, limit);
@@ -58,9 +60,10 @@ public class QueryHander implements Hander {
 //					public void run() {
 //						try {
 							String url = url(name);
-							System.out.println(String.format("公司[{0}]地址[{1}]", name, url));
+							System.out.println(String.format("公司[%s]地址[%s]", name, url));
 							if (StringUtils.isNotBlank(url)) {
 								try {
+									TimeUnit.MILLISECONDS.sleep(new Random().nextInt(500));
 									http.get(url(name), "UTF-8", new QiChaChaListParser());
 								} catch (ClientProtocolException e) {
 									e.printStackTrace();
