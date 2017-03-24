@@ -30,3 +30,17 @@ CREATE TABLE IF NOT EXISTS company (
   UNIQUE KEY uk_2(code),
   PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- DROP TABLE proxy;
+CREATE TABLE IF NOT EXISTS proxy (
+  id INT NOT NULL AUTO_INCREMENT, /* ID */
+  ip VARCHAR(254) NOT NULL, /* IP */
+  port VARCHAR(10), /* 端口 */
+  timeout VARCHAR(10), /* 时长 */
+  remark VARCHAR(254), /* 备注 */
+  lastUpdated DATETIME, /* 创建时间 */
+  dateCreated DATETIME, /* 创建时间 */
+  INDEX index_1(ip),
+  UNIQUE KEY uk_1(ip, port),
+  PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
