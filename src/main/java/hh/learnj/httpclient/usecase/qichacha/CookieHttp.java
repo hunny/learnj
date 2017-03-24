@@ -66,7 +66,7 @@ public class CookieHttp {
 		System.out.println("Done");
 	}
 
-	private String get(String url) throws Exception {
+	public String get(String url) throws Exception {
 
 		HttpGet request = new HttpGet(url);
 
@@ -94,7 +94,7 @@ public class CookieHttp {
 
 	}
 
-	private String post(String url, List<NameValuePair> postParams) throws Exception {
+	public String post(String url, List<NameValuePair> postParams) throws Exception {
 
 		HttpPost post = new HttpPost(url);
 
