@@ -40,7 +40,7 @@ public class QiChaChaListParser implements Parser {
 		Map<String, String> map = new HashMap<String, String>();
 		String name = html2text(arr[0]);
 		map.put("name", name);
-		map.put("dateCreated", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+		map.put("lastUpdated", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
 		for (String val : arr) {
 			String str = StringUtils.trim(html2text(val));
 			if (str.startsWith("企业法人：")) {

@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS company (
   englishName VARCHAR(254), /* 英文名 */
   usedName VARCHAR(254), /* 曾用名 */
   businessScope VARCHAR(254), /* 经营范围 */
+  lastUpdated DATETIME, /* 创建时间 */
   dateCreated DATETIME, /* 创建时间 */
   INDEX index_1(name),
   UNIQUE KEY uk_1(name),
