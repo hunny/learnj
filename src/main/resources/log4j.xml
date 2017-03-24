@@ -35,6 +35,9 @@
 	<category name="hh.learnweb">
 		<priority value="debug"/>
 	</category>
+	<category name="hh.learnj">
+		<priority value="debug"/>
+	</category>
 	<category name="org.springframework">
 		<priority value="DEBUG"/>
 	</category>

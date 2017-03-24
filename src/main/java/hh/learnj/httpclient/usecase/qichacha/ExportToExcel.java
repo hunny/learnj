@@ -28,7 +28,7 @@ public class ExportToExcel {
 		DB.handle(new DB.Hander() {
 			@Override
 			public void handle(Statement stmt) throws SQLException {
-				ResultSet resultSet = stmt.executeQuery("select * from " + getTableName() + " where mobile is not null ");
+				ResultSet resultSet = stmt.executeQuery("select * from " + getTableName() + " where mobile is not null and mobile != '-'");
 				XSSFWorkbook workbook = new XSSFWorkbook();
 				XSSFSheet spreadsheet = workbook.createSheet("qichacha");
 				XSSFRow row = spreadsheet.createRow(1);
@@ -49,6 +49,10 @@ public class ExportToExcel {
 				cell.setCellValue("联系地址");
 				int i = 2;
 				while (resultSet.next()) {
+					String mobile = resultSet.getString("mobile");
+					if (!mobile.matches("^1\\d{10}")) {
+						continue;
+					}
 					row = spreadsheet.createRow(i);
 					cell = row.createCell(1);
 					cell.setCellValue("" + (i - 1));
@@ -61,7 +65,7 @@ public class ExportToExcel {
 					cell = row.createCell(5);
 					cell.setCellValue(resultSet.getString("businesser"));
 					cell = row.createCell(6);
-					cell.setCellValue(resultSet.getString("mobile"));
+					cell.setCellValue(mobile);
 					cell = row.createCell(7);
 					cell.setCellValue(resultSet.getString("address"));
 					i++;
