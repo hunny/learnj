@@ -62,6 +62,5 @@ public class QiChaCha {
 		}, 0);
 		DB.handle(new InsertHandler(values));
 	}
-	
 
 }

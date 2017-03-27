@@ -41,7 +41,7 @@ public class QueryHander implements Hander {
 		final QiChachaHttp http = new QiChachaHttp();
 //		ExecutorService userExecutorService = Executors.newFixedThreadPool(10);
 		do {
-			String sql = String.format("select id, name from %s order by id asc limit %d, %d", getTableName(), limit * offset, limit);
+			String sql = String.format("select id, name from %s where mobile is not null order by id asc limit %d, %d", getTableName(), limit * offset, limit);
 			ResultSet resultSet = stmt.executeQuery(sql);
 			List<String> names = new ArrayList<String>();
 			while (resultSet.next()) {
@@ -65,6 +65,8 @@ public class QueryHander implements Hander {
 								try {
 									TimeUnit.MILLISECONDS.sleep(new Random().nextInt(500));
 									http.get(url(name), "UTF-8", new QiChaChaListParser());
+									
+//									new QiChaChaListParser().parse(CheckProxy.html(url(name), "111.7.174.198", 80));
 								} catch (ClientProtocolException e) {
 									e.printStackTrace();
 								} catch (IOException e) {

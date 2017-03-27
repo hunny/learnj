@@ -30,6 +30,7 @@ public class QiChaChaListParser implements Parser {
 		Document doc = Jsoup.parse(html);
 		Elements elements = doc.select(".m_srchList tbody td");
 		if (null == elements || elements.isEmpty()) {
+			System.err.println(doc.html());
 			return;
 		}
 		Element element = elements.get(1);
