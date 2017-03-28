@@ -7,8 +7,9 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -41,17 +42,35 @@ public class OAQueryHandler implements Hander {
 	public void handle(Statement stmt) throws SQLException {
 		int offset = 0;
 		int limit = 10;
-		TopeaseHttp http = new TopeaseHttp();
+		ExecutorService executorService = Executors.newFixedThreadPool(5);
 		do {
-			List<String> names = query(stmt, offset, limit);
+			final List<String> names = query(stmt, offset, limit);
 			if (names.isEmpty()) {
 				break;
 			}
-			for (String name : names) {
-				netGet(http, name);
+			final CountDownLatch countDown = new CountDownLatch(names.size());
+			for (final String name : names) {
+				executorService.execute(new Runnable() {
+					@Override
+					public void run() {
+						try {
+							netGet(new TopeaseHttp(), name);
+						} catch (Exception e) {
+							e.printStackTrace();
+						} finally {
+							countDown.countDown();
+						}
+					}
+				});
+			}
+			try {
+				countDown.await();
+			} catch (InterruptedException e) {
+				throw new RuntimeException(e);
 			}
 			offset++;
 		} while (true);
+		executorService.shutdown();
 	}
 
 	public void netGet(TopeaseHttp http, final String name) {
@@ -60,10 +79,10 @@ public class OAQueryHandler implements Hander {
 		if (StringUtils.isNotBlank(url)) {
 			try {
 				// Delay to fetch
-				TimeUnit.MILLISECONDS.sleep(new Random().nextInt(500));
-//				http.get(url, "UTF-8", new OAHttpParser(name));
+				// TimeUnit.MILLISECONDS.sleep(new Random().nextInt(500));
+				// http.get(url, "UTF-8", new OAHttpParser(name));
 				http.getPage(url, "UTF-8", new OAHttpParser(name));
-//				post(http, name);
+				// post(http, name);
 			} catch (ClientProtocolException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
@@ -75,8 +94,9 @@ public class OAQueryHandler implements Hander {
 	}
 
 	public List<String> query(Statement stmt, int offset, int limit) throws SQLException {
-		String sql = String.format("select id, name from %s order by id asc limit %d, %d",
-				getTableName(), limit * offset, limit);
+//		String sql = String.format("select id, name from %s where state is not null order by id asc limit %d, %d", getTableName(), limit * offset,
+//				limit);
+		String sql = String.format("select id, name from %s where state is null order by id asc limit %d", getTableName(), limit);
 		ResultSet resultSet = stmt.executeQuery(sql);
 		List<String> names = new ArrayList<String>();
 		while (resultSet.next()) {
@@ -87,7 +107,7 @@ public class OAQueryHandler implements Hander {
 		}
 		return names;
 	}
-	
+
 	protected void post(TopeaseHttp http, String name) throws Exception {
 		List<NameValuePair> postParams = new ArrayList<NameValuePair>();
 		postParams.add(new BasicNameValuePair("id", "-1"));
@@ -109,7 +129,7 @@ public class OAQueryHandler implements Hander {
 		}
 		return null;
 	}
-	
+
 	public static String escape(String str) {
 		return escape(str, true);
 	}
@@ -123,15 +143,17 @@ public class OAQueryHandler implements Hander {
 		ScriptEngine engine = sem.getEngineByExtension("js");
 		try {
 			Object res = engine.eval(String.format("%s(\"%s\")", func, str));
-			return (String)res;
+			return (String) res;
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 		return null;
 	}
 
-//	public static void main(String[] args) throws Exception {
-//		new TopeaseHttp().getPage("http://oa.topease.cn/Customer/VailCusResult.bee?id=-1&companyName=%u4E0A%u6D77%u5409%u6B23%u8D38%u6613%u6709%u9650%u516C%u53F8", "UTF-8", new OAHttpParser(""));;
-//	}
-	
+	// public static void main(String[] args) throws Exception {
+	// new
+	// TopeaseHttp().getPage("http://oa.topease.cn/Customer/VailCusResult.bee?id=-1&companyName=%u4E0A%u6D77%u5409%u6B23%u8D38%u6613%u6709%u9650%u516C%u53F8",
+	// "UTF-8", new OAHttpParser(""));;
+	// }
+
 }
