@@ -1,13 +1,9 @@
 package hh.learnj.httpclient.usecase.topease;
 
-import java.io.StringReader;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.json.Json;
-import javax.json.stream.JsonParser;
 
 import org.apache.commons.lang.StringUtils;
 import org.jsoup.Jsoup;
