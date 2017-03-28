@@ -47,10 +47,16 @@ public class ExportToExcel {
 				cell.setCellValue("联系方式");
 				cell = row.createCell(7);
 				cell.setCellValue("联系地址");
+				cell = row.createCell(8);
+				cell.setCellValue("销售代表");
+				cell = row.createCell(9);
+				cell.setCellValue("服务代表");
+				cell = row.createCell(10);
+				cell.setCellValue("客户状态");
 				int i = 2;
 				while (resultSet.next()) {
 					String mobile = resultSet.getString("mobile");
-					if (!mobile.matches("^1\\d{10}")) {
+					if (mobile.matches("^1\\d{10}")) {
 						continue;
 					}
 					row = spreadsheet.createRow(i);
@@ -68,6 +74,12 @@ public class ExportToExcel {
 					cell.setCellValue(mobile);
 					cell = row.createCell(7);
 					cell.setCellValue(resultSet.getString("address"));
+					cell = row.createCell(8);
+					cell.setCellValue(resultSet.getString("saleman"));
+					cell = row.createCell(9);
+					cell.setCellValue(resultSet.getString("serviceman"));
+					cell = row.createCell(10);
+					cell.setCellValue(resultSet.getString("state"));
 					i++;
 				}
 				FileOutputStream out = null;

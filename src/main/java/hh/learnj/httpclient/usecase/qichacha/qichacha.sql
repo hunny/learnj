@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS company (
   englishName VARCHAR(254), /* 英文名 */
   usedName VARCHAR(254), /* 曾用名 */
   businessScope VARCHAR(254), /* 经营范围 */
-  mobile VARCHAR(254), /* 客户状态 */
+  state VARCHAR(254), /* 客户状态 */
   saleman VARCHAR(254), /* 销售代表 */
   serviceman VARCHAR(254), /* 服务代表 */
   resourcedb VARCHAR(254), /* 客户所在资源库 */
