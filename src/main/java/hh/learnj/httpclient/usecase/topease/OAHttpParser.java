@@ -1,6 +1,7 @@
 package hh.learnj.httpclient.usecase.topease;
 
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,7 +14,9 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import hh.learnj.httpclient.usecase.qichacha.DB;
 import hh.learnj.httpclient.usecase.qichacha.Parser;
+import hh.learnj.httpclient.usecase.qichacha.UpdateHandler;
 
 public class OAHttpParser implements Parser {
 
@@ -62,6 +65,7 @@ public class OAHttpParser implements Parser {
 				state = StringUtils.trim(stateName.text());
 				Element saleMan = tds.get(2);// 销售代表
 				Element serviceMan = tds.get(3);// 服务代表
+				Element resource = tds.get(5);// 客户所在资源库
 				String saleman = StringUtils.trim(saleMan.text());
 				if (StringUtils.isNotBlank(saleman)) {
 					map.put("saleman", saleman);
@@ -69,6 +73,10 @@ public class OAHttpParser implements Parser {
 				String serviceman = StringUtils.trim(serviceMan.text());
 				if (StringUtils.isNotBlank(serviceman)) {
 					map.put("serviceman", serviceman);
+				}
+				String res = StringUtils.trim(resource.text());
+				if (StringUtils.isNotBlank(res)) {
+					map.put("resourcedb", res);
 				}
 			}
 			map.put("state", state);
@@ -78,7 +86,7 @@ public class OAHttpParser implements Parser {
 	
 	protected void save(Map<String, String> map) {
 		debug("更新信息[{}]", map);
-//		DB.handle(new UpdateHandler(Collections.singletonList(map)));
+		DB.handle(new UpdateHandler(Collections.singletonList(map)));
 	}
 
 }
