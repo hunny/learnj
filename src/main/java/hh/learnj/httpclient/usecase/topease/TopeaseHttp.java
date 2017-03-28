@@ -3,9 +3,14 @@
  */
 package hh.learnj.httpclient.usecase.topease;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.CookieHandler;
 import java.net.CookieManager;
+import java.net.HttpURLConnection;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -38,12 +43,13 @@ public class TopeaseHttp {
 	private static final String REFERER = "http://oa.topease.cn/";
 	private static HttpClient client = null;
 	private String cookies = null;
+	private HttpURLConnection conn;
 
 	static {
 		// make sure cookies is turn on
 		CookieHandler.setDefault(new CookieManager());
 		BasicCookieStore cookieStore = new BasicCookieStore();
-		cookieStore.addCookie(makeCookie("ASP.NET_SessionId", "po3fru55a0sqjj55oswshi55", "oa.topease.cn", "/"));
+		cookieStore.addCookie(makeCookie("ASP.NET_SessionId", "veul4h45fyfpct55xejqat45", "oa.topease.cn", "/"));
 		client = HttpClientBuilder.create().setDefaultCookieStore(cookieStore).build();
 	}
 
@@ -64,7 +70,8 @@ public class TopeaseHttp {
 		}
 	}
 
-	public String get(String url, String charset, Parser parser) throws ClientProtocolException, IOException {
+	public String get(String url, String charset, Parser parser)
+			throws ClientProtocolException, IOException, URISyntaxException {
 		HttpGet request = new HttpGet(url);
 		request.setHeader("User-Agent", USER_AGENT);
 		request.setHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
@@ -76,8 +83,7 @@ public class TopeaseHttp {
 		debug("Response Code : {}", responseCode);
 
 		// set cookies
-		setCookies(
-				response.getFirstHeader("Set-Cookie") == null ? "" : response.getFirstHeader("Set-Cookie").toString());
+		setCookies(response.getFirstHeader("Set-Cookie") == null ? "" : response.getFirstHeader("Set-Cookie").toString());
 		String html = EntityUtils.toString(response.getEntity(), charset);
 		if (null != parser) {
 			parser.parse(html);
@@ -95,7 +101,7 @@ public class TopeaseHttp {
 		post.setHeader("User-Agent", USER_AGENT);
 		post.setHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
 		post.setHeader("Accept-Language", "en-US,en;q=0.5");
-		post.setHeader("Cookie", getCookies());
+		// post.setHeader("Cookie", getCookies());
 		post.setHeader("Connection", "keep-alive");
 		post.setHeader("Referer", REFERER);
 		post.setHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -115,6 +121,39 @@ public class TopeaseHttp {
 			parser.parse(html);
 		}
 		return html;
+
+	}
+
+	public void getPage(String url, String chartset, Parser parser) throws Exception {
+
+		URL obj = new URL(url);
+		conn = (HttpURLConnection) obj.openConnection();
+
+		// default is GET
+		conn.setRequestMethod("GET");
+
+		conn.setUseCaches(false);
+
+		// act like a browser
+		conn.setRequestProperty("User-Agent", USER_AGENT);
+		conn.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+		conn.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
+		conn.addRequestProperty("Cookie", "ASP.NET_SessionId=veul4h45fyfpct55xejqat45");
+		int responseCode = conn.getResponseCode();
+		debug("Sending 'GET' request to URL : " + url);
+		debug("Response Code : " + responseCode);
+
+		BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), chartset));
+		String inputLine;
+		StringBuffer response = new StringBuffer();
+
+		while ((inputLine = in.readLine()) != null) {
+			response.append(inputLine);
+		}
+		in.close();
+		if (null != parser) {
+			parser.parse(response.toString());
+		}
 
 	}
 

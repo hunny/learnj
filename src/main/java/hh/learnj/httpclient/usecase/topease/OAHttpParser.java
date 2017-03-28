@@ -1,10 +1,13 @@
 package hh.learnj.httpclient.usecase.topease;
 
+import java.io.StringReader;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.json.Json;
+import javax.json.stream.JsonParser;
 
 import org.apache.commons.lang.StringUtils;
 import org.jsoup.Jsoup;
@@ -14,9 +17,7 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import hh.learnj.httpclient.usecase.qichacha.DB;
 import hh.learnj.httpclient.usecase.qichacha.Parser;
-import hh.learnj.httpclient.usecase.qichacha.UpdateHandler;
 
 public class OAHttpParser implements Parser {
 
@@ -36,8 +37,20 @@ public class OAHttpParser implements Parser {
 
 	@Override
 	public void parse(String html) {
+		if (html.startsWith("{")) {
+			debug("需要登录{}", html);
+			throw new UnsupportedOperationException(html);
+		}
 		Document doc = Jsoup.parse(html);
 		Elements trs = doc.select("tbody tr");
+		if (trs.size() == 0) {
+			Map<String, String> map = new HashMap<String, String>();
+			map.put("name", name);
+			map.put("lastUpdated", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+			map.put("state", "无相同客户");
+			save(map);
+			return;
+		}
 		for (Element tr : trs) {
 			Map<String, String> map = new HashMap<String, String>();
 			map.put("name", name);
@@ -53,13 +66,23 @@ public class OAHttpParser implements Parser {
 				state = StringUtils.trim(stateName.text());
 				Element saleMan = tds.get(2);// 销售代表
 				Element serviceMan = tds.get(3);// 服务代表
-				map.put("saleman", StringUtils.trim(saleMan.text()));
-				map.put("serviceman", StringUtils.trim(serviceMan.text()));
+				String saleman = StringUtils.trim(saleMan.text());
+				if (StringUtils.isNotBlank(saleman)) {
+					map.put("saleman", saleman);
+				}
+				String serviceman = StringUtils.trim(serviceMan.text());
+				if (StringUtils.isNotBlank(serviceman)) {
+					map.put("serviceman", serviceman);
+				}
 			}
 			map.put("state", state);
-			debug("更新信息[{}]", map);
-			DB.handle(new UpdateHandler(Collections.singletonList(map)));
+			save(map);
 		}
+	}
+	
+	protected void save(Map<String, String> map) {
+		debug("更新信息[{}]", map);
+//		DB.handle(new UpdateHandler(Collections.singletonList(map)));
 	}
 
 }
