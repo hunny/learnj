@@ -31,7 +31,6 @@ CREATE TABLE IF NOT EXISTS company (
   dateCreated DATETIME, /* 创建时间 */
   INDEX index_1(name),
   UNIQUE KEY uk_1(name),
-  UNIQUE KEY uk_2(code),
   PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

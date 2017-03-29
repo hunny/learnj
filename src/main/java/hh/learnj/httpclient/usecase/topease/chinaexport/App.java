@@ -1,55 +1,52 @@
 package hh.learnj.httpclient.usecase.topease.chinaexport;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.Date;
-
-import org.apache.http.client.ClientProtocolException;
-
-import hh.learnj.httpclient.usecase.topease.TopeaseHttp;
+import org.springframework.beans.BeanUtils;
 
 public class App {
 	
-	private TopeaseHttp http = new TopeaseHttp();
-
 	public static void main(String[] args) {
-		App app = new App();
-		String url = app.getUrl("2016-03", "2017-03", "1");
-		do {
-			url = app.get(url);
-		} while (null != url);
-	}
-	
-	public String get(String url) {
-		ExportParser parser = new ExportParser(url, "中国出口");
+//		china();
+		final CompanyData companyData = new CompanyData();
+		companyData.setBegin("2016-03");
+		companyData.setEnd("2017-03");
+		companyData.setCategory("");
+		companyData.setCompanyFilter("上海");
+		companyData.setToken("");
+		companyData.setSessionId("rv3d1o2u0czxbuzss4ijkkrs");
+		companyData.setRecordCount("1300");
+		companyData.setHscode("56039410");
+		CountryParser.TokenHander tokenHanlder = new CountryParser.TokenHander() {
+			@Override
+			public void handler(String name, String token, String url) {
+				CompanyData mData = new CompanyData();
+				BeanUtils.copyProperties(companyData, mData);
+				mData.setCategory(name);
+				mData.setToken(token);
+				new CompanyDataService(mData).justDoIt();
+			}
+		};
+		TopEaseHttp http = new TopEaseHttp(companyData.getSessionId());
+		CountryParser countryParser = new CountryParser(tokenHanlder, companyData);
 		try {
-			http.get(url, "UTF-8", parser);
-		} catch (ClientProtocolException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (URISyntaxException e) {
+			http.get(countryParser.getUrl(), "UTF-8", countryParser);
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-//		parser.parse(parser.read("/Users/hunnyhu/Desktop/印度-上海.html"));
-		return parser.getNext();
 	}
 	
-	protected String getUrl(String bdate, String edate, String pagenum) {
-		StringBuilder builder = new StringBuilder();
-		builder.append("http://cntrade.topease.net/Main/CompanyData?token="); 
-		builder.append("90A16018F2E2B4800BF65F266B3C15A004746A4B7A8DAEFF74C851B1A067BB1B81E75495A478163858D28419EFF1B1AADCB52392E177EE9848FF5E3C51E2610D6D7E13682835CF56");
-		builder.append("&pagenum=");
-		builder.append(pagenum);
-		builder.append("&recordCount=122");
-		builder.append("&bdate=");//2015-03
-		builder.append(bdate);
-		builder.append("&edate=");//2016-02
-		builder.append(edate);
-		builder.append("&companyFilter=%E4%B8%8A%E6%B5%B7");
-		builder.append("&_=");
-		builder.append(new Date().getTime());
-		return builder.toString();
+	public static void china() {
+		CompanyData companyData = new CompanyData();
+		companyData.setBegin("2016-03");
+		companyData.setEnd("2017-03");
+		companyData.setCategory("中国出口");
+		companyData.setCompanyFilter("上海");
+		companyData.setToken("90A16018F2E2B480BDF7F835C52ECF10A2E1B3094AA8D6C3B3B93055BE368D09B385F6679963F2FC591DBD5E7A2CB8520C23C19BC67C51EEC8E5E47611371AFCB3892A2DA110F1EE");
+		companyData.setSessionId("rv3d1o2u0czxbuzss4ijkkrs");
+		companyData.setRecordCount("1000");
+		companyData.setHscode("56039410");
+		new CompanyDataService(companyData).justDoIt();
+		//39069090-90A16018F2E2B4800BF65F266B3C15A004746A4B7A8DAEFF74C851B1A067BB1B81E75495A478163858D28419EFF1B1AADCB52392E177EE9848FF5E3C51E2610D6D7E13682835CF56
+		//56039410-90A16018F2E2B480BDF7F835C52ECF10A2E1B3094AA8D6C3B3B93055BE368D09B385F6679963F2FC591DBD5E7A2CB8520C23C19BC67C51EEC8E5E47611371AFCB3892A2DA110F1EE
 	}
 
 }
