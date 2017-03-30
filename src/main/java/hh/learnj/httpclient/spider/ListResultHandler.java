@@ -10,27 +10,24 @@ import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * @author huzexiong
- *
  */
 public class ListResultHandler implements ResultHandler {
 
 	private final Logger logger = LoggerFactory.getLogger(ListResultHandler.class);
-	
+
 	private PhantomjsSpider spider;
-	
-	/**
-	 * @return the spider
-	 */
+	private DetailResultHandler detailHandler;
+
+	public ListResultHandler(DetailResultHandler detailHandler) {
+		this.detailHandler = detailHandler;
+	}
+
 	public PhantomjsSpider getSpider() {
 		return spider;
 	}
 
-	/**
-	 * @param spider the spider to set
-	 */
 	public void setSpider(PhantomjsSpider spider) {
 		this.spider = spider;
 	}
@@ -52,7 +49,6 @@ public class ListResultHandler implements ResultHandler {
 			logger.debug("没有找到公司详情地址[{}]。", element.toString());
 			return;
 		}
-		DetailResultHandler detailHandler = new DetailResultHandler();
 		detailHandler.setSpider(spider);
 		this.spider.justDoIt(url, detailHandler);
 	}

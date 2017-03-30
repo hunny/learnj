@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS company (
   businesser VARCHAR(254), /* 企业法人 */
   mobile VARCHAR(254), /* 联系电话 */
   address VARCHAR(254), /* 企业地址 */
+  url VARCHAR(1024), /* 企业url*/
   orgCode VARCHAR(254), /* 组织机构代码 */
   socialCode VARCHAR(254), /* 统一社会信誉代码 */
   registerNumber VARCHAR(254), /* 注册号 */
