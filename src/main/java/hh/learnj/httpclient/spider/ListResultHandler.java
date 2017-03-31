@@ -46,9 +46,9 @@ public class ListResultHandler implements ResultHandler {
 		Element element = doc.select("a.query_name").first();
 		if (null == element) {
 			if (null != getSpider()) {
-				logger.debug("查询地址无结果[{}]", getSpider().getUrl());
+				logger.debug("查询地址无结果[{}][{}]", getSpider().getUrl(), doc.toString());
 			} else {
-				logger.debug("查询无结果[{}]。", html);
+				logger.debug("查询无结果[{}]。", doc.toString());
 			}
 			return;
 		}
