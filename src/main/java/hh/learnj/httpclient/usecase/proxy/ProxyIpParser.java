@@ -12,7 +12,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -30,6 +29,8 @@ import hh.learnj.httpclient.usecase.qichacha.DB.Hander;
  */
 public class ProxyIpParser implements Parser {
 
+	private ExecutorService executorService = Executors.newFixedThreadPool(10);
+	
 	@Override
 	public void parse(String html) {
 		Document doc = Jsoup.parse(html);
@@ -40,11 +41,8 @@ public class ProxyIpParser implements Parser {
 			String[] ipstr = text.split("@")[0].split(":");
 			list.add(ipstr);
 		}
-		ExecutorService executorService = Executors.newFixedThreadPool(5);
-		final CountDownLatch countDownLatch = new CountDownLatch(list.size());
 		for (final String[] arr : list) {
 			if (checkExisted(arr)) {
-				countDownLatch.countDown();
 				continue;
 			}
 			executorService.execute(new Runnable() {
@@ -82,17 +80,10 @@ public class ProxyIpParser implements Parser {
 					} catch (Exception e) {
 						System.err.println(e.getMessage());
 					} finally {
-						countDownLatch.countDown();
 					}
 				}
 			});
 		}
-		try {
-			countDownLatch.await();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		executorService.shutdown();
 	}
 	
 	/**

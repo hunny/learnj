@@ -3,6 +3,13 @@
  */
 package hh.learnj.httpclient.proxy.usecase;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.InetSocketAddress;
+import java.net.MalformedURLException;
+import java.net.Proxy;
+import java.net.URL;
+import java.net.URLConnection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -12,6 +19,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpStatus;
@@ -118,7 +126,27 @@ public class IpValidator {
 	}
 
 	public boolean validate(String ip, int port) {
-		return validate(ip, port, false);
+		return check(ip, port);
+	}
+	
+	public boolean check(String ip, int port) {
+		try {
+			URL url = new URL("http://www.baidu.com");
+			// 创建代理服务器
+			InetSocketAddress addr = new InetSocketAddress(ip, port);
+			Proxy proxy = new Proxy(Proxy.Type.HTTP, addr); // http 代理
+			URLConnection conn = url.openConnection(proxy);
+			InputStream in = conn.getInputStream();
+			String s = IOUtils.toString(in, "UTF-8");
+			if (s.indexOf("百度") > 0) {
+				return true;
+			}
+		} catch (MalformedURLException e) {
+			error(e.getMessage());
+		} catch (IOException e) {
+			error(e.getMessage());
+		}
+		return false;
 	}
 	
 	public boolean validate(String ip, int port, boolean check) {
