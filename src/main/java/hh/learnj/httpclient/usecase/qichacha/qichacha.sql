@@ -28,6 +28,8 @@ CREATE TABLE IF NOT EXISTS company (
   saleman VARCHAR(254), /* 销售代表 */
   serviceman VARCHAR(254), /* 服务代表 */
   resourcedb VARCHAR(254), /* 客户所在资源库 */
+  url VARCHAR(1024),/* 企业地址 */
+  registerAmount VARCHAR(64),/* 注册资金 */
   lastUpdated DATETIME, /* 创建时间 */
   dateCreated DATETIME, /* 创建时间 */
   INDEX index_1(name),

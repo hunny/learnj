@@ -17,6 +17,9 @@ public class TianYanCha {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		if (null == args || args.length == 0) {
+			return;
+		}
 		String exe = args[0];// C:/work/phantomjs-2.1.1-windows/bin/phantomjs.exe
 		String code = args[1];// C:/work/phantomjs-2.1.1-windows/bin/code.js
 		if (StringUtils.isBlank(exe) || StringUtils.isBlank(code)) {
