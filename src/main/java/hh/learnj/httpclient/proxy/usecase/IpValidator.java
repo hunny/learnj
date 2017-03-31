@@ -14,6 +14,8 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHost;
+import org.apache.http.HttpStatus;
+import org.apache.http.StatusLine;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -116,6 +118,10 @@ public class IpValidator {
 	}
 
 	public boolean validate(String ip, int port) {
+		return validate(ip, port, false);
+	}
+	
+	public boolean validate(String ip, int port, boolean check) {
 		CloseableHttpClient httpclient = HttpClients.createDefault();
 		try {
 			HttpHost target = new HttpHost("www.whoishostingthis.com", 80, "http");
@@ -131,18 +137,24 @@ public class IpValidator {
 
 			CloseableHttpResponse response = httpclient.execute(target, request);
 			debug("----------------------------------------");
-			debug("{}", response.getStatusLine());
-			String html = EntityUtils.toString(response.getEntity());
-			Document doc = Jsoup.parse(html);
-			Element element = doc.select("div#user-agent").first();
-			if (null != element) {
-				Element userAgentElement = element.select("div.user-agent").first();
-				if (null != userAgentElement) {
-					debug(MessageFormat.format("User Agent is: {0}", userAgentElement.text()));
-				}
-				Element ipElement = element.select("div.ip").first();
-				if (null != ipElement) {
-					debug(MessageFormat.format("IP Address is: {0}, Proxy IP:[{1}:{2}]", ipElement.text(), ip, port));
+			StatusLine statusLine = response.getStatusLine();
+			debug("{}", statusLine);
+			if (statusLine.getStatusCode() != HttpStatus.SC_OK) {
+				return false;
+			}
+			if (check) {
+				String html = EntityUtils.toString(response.getEntity());
+				Document doc = Jsoup.parse(html);
+				Element element = doc.select("div#user-agent").first();
+				if (null != element) {
+					Element userAgentElement = element.select("div.user-agent").first();
+					if (null != userAgentElement) {
+						debug(MessageFormat.format("User Agent is: {0}", userAgentElement.text()));
+					}
+					Element ipElement = element.select("div.ip").first();
+					if (null != ipElement) {
+						debug(MessageFormat.format("IP Address is: {0}, Proxy IP:[{1}:{2}]", ipElement.text(), ip, port));
+					}
 				}
 			}
 		} catch (Exception e) {
