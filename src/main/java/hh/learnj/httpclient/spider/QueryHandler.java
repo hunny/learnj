@@ -36,11 +36,11 @@ public class QueryHandler implements Hander {
 
 	@Override
 	public void handle(Statement stmt) throws SQLException {
-		String id = "1";
+		String id = "0";
 		do {
 			String sql = String.format(
-					"select id, name from %s where id > %s and mobile is not null order by id asc limit %d", id,
-					getTableName(), limit);
+					"select id, name from %s where id > %s and mobile is null order by id asc limit %d",
+					getTableName(), id, limit);
 			ResultSet resultSet = stmt.executeQuery(sql);
 			List<String> names = new ArrayList<String>();
 			while (resultSet.next()) {
@@ -65,6 +65,7 @@ public class QueryHandler implements Hander {
 					e.printStackTrace();
 				}
 				listHandler.setSpider(spider);
+				listHandler.getDetailHandler().setName(name);
 				spider.justDoIt(url, listHandler);
 			}
 		} while (true);
@@ -79,7 +80,7 @@ public class QueryHandler implements Hander {
 			return builder.toString();
 		} catch (UnsupportedEncodingException e) {
 		}
-		return null;
+		return null;//"http://www.whoishostingthis.com/tools/user-agent/";
 	}
 
 	protected void debug(String format, Object... arguments) {

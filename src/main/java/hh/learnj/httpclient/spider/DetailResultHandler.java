@@ -27,6 +27,15 @@ public class DetailResultHandler implements ResultHandler {
 	private final Logger logger = LoggerFactory.getLogger(DetailResultHandler.class);
 
 	private PhantomjsSpider spider;
+	private String name;
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
 
 	/**
 	 * @return the spider
@@ -51,11 +60,11 @@ public class DetailResultHandler implements ResultHandler {
 			logger.debug("无公司节点信息[{}]。", doc.toString());
 			return;
 		}
+		logger.debug("[{}]", element.toString());
 		Map<String, String> data = new HashMap<String, String>();
-		Element company = element.select("div.company_info_text div.ng-binding").first();
-		data.put("name", StringUtils.trim(company.text()));
+		data.put("name", this.getName());
 		data.put("lastUpdated", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-		Elements spans = element.select("div.company_info_text span.ng-binding");
+		Elements spans = element.select("span.ng-binding");
 		// 电话: 18
 		// 地址: 青浦区
 		for (Element span : spans) {
@@ -91,14 +100,14 @@ public class DetailResultHandler implements ResultHandler {
 				if (StringUtils.isNotBlank(businesser)) {
 					data.put("businesser", businesser);
 				}
-			} else if (text.startsWith("注册资金")) {
-				Elements hrefs = elem.select("a");
-				if (null == hrefs) {
+			} else if (text.startsWith("注册资本")) {
+				Elements divs = elem.select("div.ng-binding");
+				if (null == divs) {
 					logger.debug("没有找到注册资金。");
 					continue;
 				}
-				logger.debug("[{}]", hrefs.toString());
-				Element href = hrefs.first();
+				logger.debug("[{}]", divs.toString());
+				Element href = divs.first();
 				String registerAmount = StringUtils.trim(href.text());
 				if (StringUtils.isNotBlank(registerAmount)) {
 					data.put("registerAmount", registerAmount);

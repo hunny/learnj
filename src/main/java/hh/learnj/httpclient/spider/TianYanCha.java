@@ -20,8 +20,8 @@ public class TianYanCha {
 		if (null == args || args.length == 0) {
 			return;
 		}
-		String exe = args[0];// C:/work/phantomjs-2.1.1-windows/bin/phantomjs.exe
-		String code = args[1];// C:/work/phantomjs-2.1.1-windows/bin/code.js
+		String exe = args[0];
+		String code = args[1];
 		if (StringUtils.isBlank(exe) || StringUtils.isBlank(code)) {
 			System.out.println("参数不正确。");
 			return;

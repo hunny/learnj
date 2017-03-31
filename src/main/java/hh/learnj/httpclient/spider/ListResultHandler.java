@@ -24,6 +24,14 @@ public class ListResultHandler implements ResultHandler {
 		this.detailHandler = detailHandler;
 	}
 
+	public DetailResultHandler getDetailHandler() {
+		return detailHandler;
+	}
+
+	public void setDetailHandler(DetailResultHandler detailHandler) {
+		this.detailHandler = detailHandler;
+	}
+
 	public PhantomjsSpider getSpider() {
 		return spider;
 	}
