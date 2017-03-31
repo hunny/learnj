@@ -15,9 +15,15 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -48,6 +54,7 @@ public class IpValidator {
 
 	private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36";
 	private final Logger logger = LoggerFactory.getLogger(ProxyValidator.class);
+	private ExecutorService executorService = Executors.newFixedThreadPool(10);
 
 	public static void main(String[] args) {
 		new IpValidator().lookupDB();
@@ -55,19 +62,31 @@ public class IpValidator {
 
 	protected void debug(String format, Object... args) {
 		if (logger.isDebugEnabled()) {
-			logger.debug(format, args);
+			if (null == args || args.length == 0) {
+				logger.debug(format);
+			} else {
+				logger.debug(format, args);
+			}
 		}
 	}
 
 	protected void error(String format, Object... args) {
 		if (logger.isErrorEnabled()) {
-			logger.error(format, args);
+			if (null == args || args.length == 0) {
+				logger.error(format);
+			} else {
+				logger.error(format, args);
+			}
 		}
 	}
 
 	protected void info(String format, Object... args) {
 		if (logger.isInfoEnabled()) {
-			logger.info(format, args);
+			if (null == args || args.length == 0) {
+				logger.info(format);
+			} else {
+				logger.info(format, args);
+			}
 		}
 	}
 
@@ -77,23 +96,100 @@ public class IpValidator {
 			public String getTableName() {
 				return "proxy";
 			}
+
 			@Override
 			public void handle(Statement stmt) throws SQLException {
-				String sql = MessageFormat.format("SELECT IP, PORT FROM {0} ORDER BY ID ASC", getTableName());
-				ResultSet resultSet = stmt.executeQuery(sql);
-				while (resultSet.next()) {
-					String ip = resultSet.getString("IP");
-					int port = resultSet.getInt("PORT");
-					if (port <= 0 || StringUtils.isBlank(ip)) {
-						continue;
-					}
-					debug(MessageFormat.format("查询[{0}][{1}]", ip, port));
-					update(getTableName(), ip, port);
+				if (executorService.isShutdown()) {
+					executorService = Executors.newFixedThreadPool(10);
 				}
+				String id = "0";
+				String limit = "3";
+				List<Ips> list = new ArrayList<Ips>();
+				do {
+					String sql = MessageFormat.format("SELECT ID, IP, PORT FROM {0} WHERE ID > {1} ORDER BY ID ASC LIMIT {2}",
+							getTableName(), id, limit);
+					ResultSet resultSet = stmt.executeQuery(sql);
+					while (resultSet.next()) {
+						final String ip = resultSet.getString("IP");
+						final int port = resultSet.getInt("PORT");
+						if (port <= 0 || StringUtils.isBlank(ip)) {
+							continue;
+						}
+						id = String.valueOf(resultSet.getInt("ID"));
+						Ips ips = new Ips();
+						ips.setIp(ip);
+						ips.setPort(port);
+						list.add(ips);
+					}
+					if (list.isEmpty()) {
+						break;
+					}
+					CyclicBarrier barrier = null;//new CyclicBarrier(list.size());
+					for (Ips ips : list) {
+						executorService.execute(new RunChecker(getTableName(), ips, barrier));
+					}
+				} while (true);
+//				executorService.shutdown();
 			}
 		});
 	}
-	
+
+	class RunChecker implements Runnable {
+
+		private String tableName = null;
+		private Ips ips = null;
+		private CyclicBarrier barrier = null;
+
+		public RunChecker(String tableName, Ips ips, CyclicBarrier barrier) {
+			this.tableName = tableName;
+			this.ips = ips;
+			this.barrier = barrier;
+		}
+
+		@Override
+		public void run() {
+			try {
+				debug(MessageFormat.format("查询[{0}][{1}]", ips.getIp(), ips.getPort()));
+				update(tableName, ips.getIp(), ips.getPort());
+			} catch (Exception e) {
+				error(e.getMessage());
+			} finally {
+				if (null != barrier) {
+					try {
+						this.barrier.await();
+					} catch (InterruptedException e) {
+						error(e.getMessage());
+					} catch (BrokenBarrierException e) {
+						error(e.getMessage());
+					}
+				}
+			}
+		}
+
+	}
+
+	class Ips {
+		private String ip = null;
+		private int port = -1;
+
+		public String getIp() {
+			return ip;
+		}
+
+		public void setIp(String ip) {
+			this.ip = ip;
+		}
+
+		public int getPort() {
+			return port;
+		}
+
+		public void setPort(int port) {
+			this.port = port;
+		}
+
+	}
+
 	public void update(final String tableName, final String ip, final int port) {
 		DB.handle(new Hander() {
 
@@ -121,14 +217,14 @@ public class IpValidator {
 				update.put("lastUpdated", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
 				DB.update(tableName, update, "ip", stmt);
 			}
-			
+
 		});
 	}
 
 	public boolean validate(String ip, int port) {
 		return check(ip, port);
 	}
-	
+
 	public boolean check(String ip, int port) {
 		try {
 			URL url = new URL("http://www.baidu.com");
@@ -148,7 +244,7 @@ public class IpValidator {
 		}
 		return false;
 	}
-	
+
 	public boolean validate(String ip, int port, boolean check) {
 		CloseableHttpClient httpclient = HttpClients.createDefault();
 		try {
