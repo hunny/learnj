@@ -1,5 +1,7 @@
 var system = require('system')
 var address = system.args[1];
+var shot = system.args[2];
+shot = (shot == undefined ? 'defaultName' : shot);
 var page = require('webpage').create();
 page.settings.userAgent = 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36';
 var url = address;
@@ -76,7 +78,7 @@ page.open(url, function(status) {
 		phantom.exit();
 	} else {
 		window.setTimeout(function() {
-			page.render("test1.png"); // 截图
+			page.render(shot + ".png"); // 截图
 			console.log(page.content);
 			phantom.exit();
 		}, 5000);
