@@ -14,7 +14,7 @@ page.onError = function(msg, trace) {
 		});
 	}
 	console.error(msgStack.join('\n'));
-	phantom.exit();
+	//phantom.exit();
 };
 page.onAlert = function() {
 	//console.log('onAlert');
