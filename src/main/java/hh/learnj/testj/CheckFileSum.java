@@ -32,12 +32,13 @@ public class CheckFileSum {
 			return;
 		}
 
-		String fileName = args[0];
+		String fileName = "e:/angler-n2g47h-factory-f1111327.zip";//args[0];
 		System.out.println(MessageFormat.format("检查文件[{0}]的md5值", fileName));
 		System.out.println("apache :");
 		apacheMd5(fileName);
 		System.out.println("java :");
 		javaMd5(fileName);
+		javaSHA256(fileName);
 
 	}
 
@@ -54,6 +55,12 @@ public class CheckFileSum {
 		}
 	}
 
+	/**
+	 * 正确的
+	 * @param fileName
+	 * @return
+	 * @throws FileNotFoundException
+	 */
 	public static String javaMd5(String fileName) throws FileNotFoundException {
 		String value = null;
 		File file = new File(fileName); 
@@ -61,6 +68,37 @@ public class CheckFileSum {
 		try {
 			MappedByteBuffer byteBuffer = in.getChannel().map(FileChannel.MapMode.READ_ONLY, 0, file.length());
 			MessageDigest md5 = MessageDigest.getInstance("MD5");
+			md5.update(byteBuffer);
+			BigInteger bi = new BigInteger(1, md5.digest());
+			value = bi.toString(16);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (null != in) {
+				try {
+					in.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		System.out.println(value);
+		return value;
+	}
+	
+	/**
+	 * 正确的
+	 * @param fileName
+	 * @return
+	 * @throws FileNotFoundException
+	 */
+	public static String javaSHA256(String fileName) throws FileNotFoundException {
+		String value = null;
+		File file = new File(fileName); 
+		FileInputStream in = new FileInputStream(file);
+		try {
+			MappedByteBuffer byteBuffer = in.getChannel().map(FileChannel.MapMode.READ_ONLY, 0, file.length());
+			MessageDigest md5 = MessageDigest.getInstance("SHA-256");
 			md5.update(byteBuffer);
 			BigInteger bi = new BigInteger(1, md5.digest());
 			value = bi.toString(16);
