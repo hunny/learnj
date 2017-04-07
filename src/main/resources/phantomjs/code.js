@@ -53,8 +53,8 @@ page.onPrompt = function() {
 	//console.log('onPrompt');
 };
 page.onResourceError = function(resourceError) {
-  console.log('Unable to load resource (#' + resourceError.id + 'URL:' + resourceError.url + ')');
-  console.log('Error code: ' + resourceError.errorCode + '. Description: ' + resourceError.errorString);
+  //console.log('Unable to load resource (#' + resourceError.id + 'URL:' + resourceError.url + ')');
+  //console.log('Error code: ' + resourceError.errorCode + '. Description: ' + resourceError.errorString);
 };
 page.onResourceReceived = function(response) {
 	//console.log('Response (#' + response.id + ', stage "' + response.stage + '"): ' + JSON.stringify(response));
