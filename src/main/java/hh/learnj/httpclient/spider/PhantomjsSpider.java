@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
+import java.util.Date;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -58,6 +59,7 @@ public class PhantomjsSpider {
 		setUrl(url);
 		Runtime rt = Runtime.getRuntime();
 		String exec = MessageFormat.format("{0} {1} {2}", this.exe, this.code, url);
+		
 		debug(exec);
 		InputStream is = null;
 		try {
