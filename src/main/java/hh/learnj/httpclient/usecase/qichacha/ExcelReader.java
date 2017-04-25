@@ -72,12 +72,10 @@ public class ExcelReader {
 					handler.handle(i, header);
 				} else {
 					String[] values = new String[header.size()];
-					int n = 0;
-					while (cellIterator.hasNext()) {
-						Cell cell = cellIterator.next();
+					for (int n = 0; n < values.length; n++) {
+						Cell cell = row.getCell(n);
 						String value = readCell(cell);
 						values[n] = value;
-						n++;
 						if (n >= values.length) {
 							break;
 						}

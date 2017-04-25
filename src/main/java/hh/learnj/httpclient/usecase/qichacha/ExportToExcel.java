@@ -28,7 +28,7 @@ public class ExportToExcel {
 		DB.handle(new DB.Hander() {
 			@Override
 			public void handle(Statement stmt) throws SQLException {
-				ResultSet resultSet = stmt.executeQuery("select * from " + getTableName() + " where mobile is not null and mobile != '-'");
+				ResultSet resultSet = stmt.executeQuery("select * from " + getTableName() + " where (CODE LIKE '%94060000%' OR CODE LIKE '%32041700%') and lastUpdated <= '2017-04-12 13:27:02' and mobile is not null ORDER BY ID DESC ");
 				XSSFWorkbook workbook = new XSSFWorkbook();
 				XSSFSheet spreadsheet = workbook.createSheet("qichacha");
 				XSSFRow row = spreadsheet.createRow(1);
@@ -53,12 +53,14 @@ public class ExportToExcel {
 				cell.setCellValue("服务代表");
 				cell = row.createCell(10);
 				cell.setCellValue("客户状态");
+				cell = row.createCell(11);
+				cell.setCellValue("注册资本");
 				int i = 2;
 				while (resultSet.next()) {
 					String mobile = resultSet.getString("mobile");
-					if (mobile.matches("^1\\d{10}")) {
-						continue;
-					}
+//					if (!mobile.matches("^1\\d{10}")) {
+//						continue;
+//					}
 					row = spreadsheet.createRow(i);
 					cell = row.createCell(1);
 					cell.setCellValue("" + (i - 1));
@@ -80,10 +82,12 @@ public class ExportToExcel {
 					cell.setCellValue(resultSet.getString("serviceman"));
 					cell = row.createCell(10);
 					cell.setCellValue(resultSet.getString("state"));
+					cell = row.createCell(11);
+					cell.setCellValue(resultSet.getString("registerAmount"));
 					i++;
 				}
 				FileOutputStream out = null;
-				String name = "d:/qichacha.xlsx";
+				String name = "d:/94060000_32041700.xlsx";
 				try {
 					out = new FileOutputStream(new File(name));
 					workbook.write(out);
